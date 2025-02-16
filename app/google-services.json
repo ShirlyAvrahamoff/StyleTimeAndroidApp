@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "37925781767",
+    "project_id": "styletimeandroidapp-5521a",
+    "storage_bucket": "styletimeandroidapp-5521a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:37925781767:android:c856388dbb7d5c44bf85a2",
+        "android_client_info": {
+          "package_name": "com.example.styletimeandroidapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBV49rE9qNwtHZFYPWrE5tIh4vO5avlnMk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

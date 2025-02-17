@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/loginFragment">
+
+    <!-- Login Screen -->
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.styletimeandroidapp.fragments.LoginFragment"
+        android:label="Login"
+        tools:layout="@layout/fragment_login">
+        <action
+            android:id="@+id/action_loginFragment_to_registerFragment"
+            app:destination="@id/registerFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_clientHomeFragment"
+            app:destination="@id/clientHomeFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_adminHomeFragment"
+            app:destination="@id/adminHomeFragment" />
+    </fragment>
+
+    <!-- Registration Screen -->
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="com.example.styletimeandroidapp.fragments.RegisterFragment"
+        android:label="Register"
+        tools:layout="@layout/fragment_register">
+        <action
+            android:id="@+id/action_registerFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
+
+    <!-- Client Home Screen -->
+    <fragment
+        android:id="@+id/clientHomeFragment"
+        android:name="com.example.styletimeandroidapp.fragments.ClientHomeFragment"
+        android:label="Client Home"
+        tools:layout="@layout/fragment_client_home">
+        <action
+            android:id="@+id/action_clientHomeFragment_to_bookAppointmentFragment"
+            app:destination="@id/bookAppointmentFragment" />
+    </fragment>
+
+    <!-- Admin Home Screen -->
+    <fragment
+        android:id="@+id/adminHomeFragment"
+        android:name="com.example.styletimeandroidapp.fragments.AdminHomeFragment"
+        android:label="Admin Home"
+        tools:layout="@layout/fragment_admin_home" />
+
+    <!-- Appointment Booking Screen -->
+    <fragment
+        android:id="@+id/bookAppointmentFragment"
+        android:name="com.example.styletimeandroidapp.fragments.BookAppointmentFragment"
+        android:label="Book Appointment"
+        tools:layout="@layout/fragment_book_appointment">
+        <action
+            android:id="@+id/action_bookAppointmentFragment_to_clientHomeFragment"
+            app:destination="@id/clientHomeFragment" />
+    </fragment>
+
+</navigation>

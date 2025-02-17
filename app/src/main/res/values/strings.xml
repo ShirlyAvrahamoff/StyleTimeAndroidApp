@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">StyleTime</string>
+    <string name="hello">Hello, %1$s!</string>
+    <string name="no_appointments">No upcoming appointments available.</string>
+    <string name="failed_to_load">Failed to load data.</string>
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="confirm_appointment">Confirm Appointment</string>
+    <string name="loading">Loading...</string>
+    <string name="admin_home">Admin Home</string>
+    <string name="client_home">Client Home</string>
+    <string name="select_treatment">Select a treatment</string>
+</resources>

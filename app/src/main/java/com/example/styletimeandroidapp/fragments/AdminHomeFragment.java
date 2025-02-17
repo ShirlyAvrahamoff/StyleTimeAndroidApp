@@ -34,11 +34,11 @@ public class AdminHomeFragment extends Fragment {
         allAppointmentsText = view.findViewById(R.id.allAppointmentsText);
 
         if (welcomeText == null) {
-            Log.e("AdminHomeFragment", "❌ ERROR: welcomeText is NULL! Check fragment_admin_home.xml");
+            Log.e("AdminHomeFragment", " ERROR: welcomeText is NULL! Check fragment_admin_home.xml");
         }
 
         if (allAppointmentsText == null) {
-            Log.e("AdminHomeFragment", "❌ ERROR: allAppointmentsText is NULL! Check fragment_admin_home.xml");
+            Log.e("AdminHomeFragment", " ERROR: allAppointmentsText is NULL! Check fragment_admin_home.xml");
         }
 
         loadAdminDetails();
@@ -47,7 +47,7 @@ public class AdminHomeFragment extends Fragment {
 
     private void loadAdminDetails() {
         if (auth.getCurrentUser() == null) {
-            Log.e("AdminHomeFragment", "❌ ERROR: User is not logged in!");
+            Log.e("AdminHomeFragment", " ERROR: User is not logged in!");
             return;
         }
 
@@ -61,19 +61,19 @@ public class AdminHomeFragment extends Fragment {
                             if (welcomeText != null) {
                                 welcomeText.setText("Hello, " + name + "!");
                             } else {
-                                Log.e("AdminHomeFragment", "❌ ERROR: welcomeText is NULL, cannot set text.");
+                                Log.e("AdminHomeFragment", " ERROR: welcomeText is NULL, cannot set text.");
                             }
                         } else {
-                            Log.e("AdminHomeFragment", "❌ ERROR: 'name' field is missing in Firestore.");
+                            Log.e("AdminHomeFragment", " ERROR: 'name' field is missing in Firestore.");
                         }
 
                         loadAllAppointments();
                     } else {
-                        Log.e("AdminHomeFragment", "❌ ERROR: User document does not exist in Firestore.");
+                        Log.e("AdminHomeFragment", " ERROR: User document does not exist in Firestore.");
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Log.e("AdminHomeFragment", "❌ ERROR: Failed to load admin data.", e);
+                    Log.e("AdminHomeFragment", " ERROR: Failed to load admin data.", e);
                     Toast.makeText(getActivity(), "Failed to load user data.", Toast.LENGTH_SHORT).show();
                 });
     }
@@ -92,7 +92,7 @@ public class AdminHomeFragment extends Fragment {
                                 appointments.append("• ").append(user).append(" - ").append(treatment)
                                         .append(" on ").append(date).append("\n");
                             } else {
-                                Log.e("AdminHomeFragment", "❌ ERROR: Missing data in appointment document: " + doc.getId());
+                                Log.e("AdminHomeFragment", " ERROR: Missing data in appointment document: " + doc.getId());
                             }
                         }
 
@@ -106,7 +106,7 @@ public class AdminHomeFragment extends Fragment {
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Log.e("AdminHomeFragment", "❌ ERROR: Failed to fetch appointments.", e);
+                    Log.e("AdminHomeFragment", " ERROR: Failed to fetch appointments.", e);
                     Toast.makeText(getActivity(), "Failed to load appointments.", Toast.LENGTH_SHORT).show();
                 });
     }

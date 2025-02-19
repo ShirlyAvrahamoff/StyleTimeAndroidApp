@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -12,15 +11,22 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.StyleTimeAndroidApp"
         tools:targetApi="31">
+
         <activity
             android:name=".activities.MainActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-    </application>
 
+        <!-- פתרון לקונפליקט עם Firebase Auth -->
+        <activity
+            android:name="com.google.firebase.auth.internal.GenericIdpActivity"
+            tools:replace="android:exported"
+            android:exported="true"/>
+
+    </application>
 </manifest>

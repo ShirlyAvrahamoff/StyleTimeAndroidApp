@@ -12,4 +12,5 @@
     <string name="admin_home">Admin Home</string>
     <string name="client_home">Client Home</string>
     <string name="select_treatment">Select a treatment</string>
+    <string name="default_notification_channel_id">default_channel</string>
 </resources>

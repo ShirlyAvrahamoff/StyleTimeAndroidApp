@@ -2,51 +2,48 @@ package com.example.styletimeandroidapp.fragments;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-
 import com.example.styletimeandroidapp.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class LoginFragment extends Fragment {
-    private EditText emailEditText, passwordEditText;
-    private Button loginButton;
-    private TextView registerText;
-    private FirebaseAuth auth;
+
+    private FirebaseAuth mAuth;
     private FirebaseFirestore db;
+    private NavController navController;
 
-    @Nullable
+    private EditText emailEditText, passwordEditText;
+
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_login, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_login, container, false);
+    }
 
-        auth = FirebaseAuth.getInstance();
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
+        mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
         emailEditText = view.findViewById(R.id.emailEditText);
         passwordEditText = view.findViewById(R.id.passwordEditText);
-        loginButton = view.findViewById(R.id.loginButton);
-        registerText = view.findViewById(R.id.registerText);
 
-        loginButton.setOnClickListener(v -> loginUser());
-
-        // 🔥 תיקון: ניווט למסך ההרשמה
-        registerText.setOnClickListener(v ->
-                Navigation.findNavController(v).navigate(R.id.action_loginFragment_to_registerFragment)
-        );
-
-        return view;
+        view.findViewById(R.id.login_button).setOnClickListener(v -> loginUser());
+        view.findViewById(R.id.go_to_register).setOnClickListener(v -> navController.navigate(R.id.registerFragment));
     }
 
     private void loginUser() {
@@ -54,45 +51,59 @@ public class LoginFragment extends Fragment {
         String password = passwordEditText.getText().toString().trim();
 
         if (email.isEmpty() || password.isEmpty()) {
-            showErrorDialog("Login Failed", "Please enter both email and password.");
+            showErrorDialog("Error", "Email and password cannot be empty.");
             return;
         }
 
-        auth.signInWithEmailAndPassword(email, password)
+        mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        FirebaseUser user = auth.getCurrentUser();
-                        if (user != null) {
-                            checkUserRole(user.getUid());
-                        }
+                        Log.d("LoginFragment", "Login successful, checking role...");
+                        checkUserRole();
                     } else {
+                        Log.e("LoginFragment", "Login failed", task.getException());
                         showErrorDialog("Login Failed", "Invalid email or password.");
                     }
                 });
     }
 
-    private void checkUserRole(String userId) {
-        db.collection("users").document(userId).get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        String role = documentSnapshot.getString("role");
-                        if ("admin".equals(role)) {
-                            Navigation.findNavController(requireView()).navigate(R.id.action_loginFragment_to_adminHomeFragment);
+    private void checkUserRole() {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null) {
+            Log.e("LoginFragment", "No user found after login");
+            return;
+        }
+
+        db.collection("users").document(currentUser.getUid()).get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            String role = document.getString("role");
+                            if ("admin".equals(role)) {
+                                Log.d("LoginFragment", "User is admin, navigating to AdminHomeFragment");
+                                navController.navigate(R.id.adminHomeFragment);
+                            } else {
+                                Log.d("LoginFragment", "User is client, navigating to ClientHomeFragment");
+                                navController.navigate(R.id.clientHomeFragment);
+                            }
                         } else {
-                            Navigation.findNavController(requireView()).navigate(R.id.action_loginFragment_to_clientHomeFragment);
+                            Log.e("LoginFragment", "User role not found");
+                            showErrorDialog("Error", "Failed to retrieve user role.");
                         }
                     } else {
-                        showErrorDialog("Error", "User data not found.");
+                        Log.e("LoginFragment", "Failed to fetch user role", task.getException());
+                        showErrorDialog("Error", "Failed to retrieve user data.");
                     }
-                })
-                .addOnFailureListener(e -> showErrorDialog("Database Error", "Failed to access database."));
+                });
     }
 
     private void showErrorDialog(String title, String message) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(title)
+        new AlertDialog.Builder(requireContext())
+                .setTitle(title)
                 .setMessage(message)
                 .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
+                .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
     }
 }

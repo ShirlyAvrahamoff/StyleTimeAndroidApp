@@ -1,71 +1,72 @@
 package com.example.styletimeandroidapp.adapters;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.styletimeandroidapp.R;
-import com.example.styletimeandroidapp.models.Appointment;
 
 import java.util.List;
 
-public class AvailableAppointmentsAdapter extends RecyclerView.Adapter<AvailableAppointmentsAdapter.AppointmentViewHolder> {
+public class AvailableAppointmentsAdapter extends RecyclerView.Adapter<AvailableAppointmentsAdapter.ViewHolder> {
 
-    private List<Appointment> availableAppointments;
-    private OnAppointmentClickListener listener;
+    private final List<String> appointments;
+    private final OnItemClickListener listener;
+    private int selectedPosition = RecyclerView.NO_POSITION;
 
-    public interface OnAppointmentClickListener {
-        void onAppointmentClick(Appointment appointment);
+    public interface OnItemClickListener {
+        void onItemClick(String appointment);
     }
 
-    public AvailableAppointmentsAdapter(List<Appointment> availableAppointments, OnAppointmentClickListener listener) {
-        this.availableAppointments = availableAppointments;
+    public AvailableAppointmentsAdapter(List<String> appointments, OnItemClickListener listener) {
+        this.appointments = appointments;
         this.listener = listener;
-    }
-
-    public class AppointmentViewHolder extends RecyclerView.ViewHolder {
-        TextView dateText, timeText;
-        CardView cardView;
-
-        public AppointmentViewHolder(View itemView) {
-            super(itemView);
-            dateText = itemView.findViewById(R.id.appointmentDate);
-            timeText = itemView.findViewById(R.id.appointmentTime);
-            cardView = itemView.findViewById(R.id.cardView);
-        }
-
-        public void bind(Appointment appointment) {
-            dateText.setText(appointment.getStartTime().split(" ")[0]); // Extract date
-            timeText.setText(appointment.getStartTime().split(" ")[1]); // Extract time
-
-            if (!appointment.isAvailable()) {
-                cardView.setCardBackgroundColor(itemView.getResources().getColor(R.color.gray)); // Mark as unavailable
-                cardView.setEnabled(false);
-            } else {
-                cardView.setOnClickListener(v -> listener.onAppointmentClick(appointment));
-            }
-        }
     }
 
     @NonNull
     @Override
-    public AppointmentViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.appointment_card, parent, false);
-        return new AppointmentViewHolder(view);
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_available_appointment, parent, false);
+        return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull AppointmentViewHolder holder, int position) {
-        holder.bind(availableAppointments.get(position));
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        String appointment = appointments.get(position);
+        holder.timeText.setText(appointment);
+
+        // שינוי צבע הכפתור לפי בחירה
+        holder.itemView.setBackgroundResource(position == selectedPosition ?
+                R.drawable.selected_time_background : R.drawable.default_time_background);
+
+        holder.itemView.setOnClickListener(v -> {
+            int previousPosition = selectedPosition;
+            selectedPosition = holder.getAdapterPosition();
+
+            // לעדכן רק את הכפתור הישן והחדש כדי לשפר ביצועים
+            notifyItemChanged(previousPosition);
+            notifyItemChanged(selectedPosition);
+
+            listener.onItemClick(appointment);
+        });
     }
 
     @Override
     public int getItemCount() {
-        return availableAppointments.size();
+        return appointments.size();
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        TextView timeText;
+
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            timeText = itemView.findViewById(R.id.appointmentTimeText);
+        }
     }
 }

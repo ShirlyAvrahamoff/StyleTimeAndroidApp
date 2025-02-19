@@ -1,47 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="24dp"
-    android:gravity="center"
-    android:background="@color/background">
+    android:background="@android:color/white"
+    android:padding="16dp">
 
+    <!-- Step Indicator -->
+    <TextView
+        android:id="@+id/stepIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Step 1: Select Treatment"
+        android:textSize="16sp"
+        android:textColor="@android:color/black"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:paddingBottom="8dp"/>
+
+    <!-- Treatment Spinner -->
     <Spinner
         android:id="@+id/treatmentSpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:prompt="@string/select_treatment"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Available Appointments"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:paddingTop="16dp"/>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/availableSlotsRecyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-    <TextView
-        android:id="@+id/selectedSlotText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="No slot selected"
-        android:textSize="16sp"
-        android:textStyle="bold"
+        android:background="@drawable/spinner_background"
         android:padding="8dp"/>
 
+    <!-- Calendar View -->
+    <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+        android:id="@+id/calendarView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:mcv_tileSize="40dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/treatmentSpinner"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- Available Times Title -->
+    <TextView
+        android:id="@+id/availableTimesTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select an available time:"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/calendarView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="12dp"/>
+
+    <!-- Available Appointments RecyclerView -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/availableAppointmentsRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/availableTimesTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- Confirm Button -->
     <Button
-        android:id="@+id/confirmButton"
+        android:id="@+id/confirmAppointmentButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Confirm Appointment"
-        android:backgroundTint="@color/primary"
         android:textColor="@android:color/white"
+        android:background="@drawable/rounded_button_background"
         android:padding="12dp"
-        android:layout_marginTop="16dp"/>
-
-</LinearLayout>
+        android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

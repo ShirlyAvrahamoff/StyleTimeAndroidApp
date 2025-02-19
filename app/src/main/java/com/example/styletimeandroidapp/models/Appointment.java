@@ -1,60 +1,30 @@
 package com.example.styletimeandroidapp.models;
 
 public class Appointment {
-    private String appointmentId;
-    private String clientId; // Will be null if the appointment is available
-    private String treatmentId;
-    private String startTime;
-    private String endTime;
-    private boolean isCancelled;
-    private boolean isAvailable; // New field to track availability
+    private String id;
+    private String userId;
+    private String treatment;
+    private String date;
+    private String time;
+    private int isAvailable; // ✅ 0 = פנוי, 1 = תפוס
 
-    public Appointment(String appointmentId, String treatmentId, String startTime, String endTime, boolean isAvailable) {
-        this.appointmentId = appointmentId;
-        this.treatmentId = treatmentId;
-        this.startTime = startTime;
-        this.endTime = endTime;
+    public Appointment() {}
+
+    public Appointment(String id, String userId, String treatment, String date, String time, int isAvailable) {
+        this.id = id;
+        this.userId = userId;
+        this.treatment = treatment;
+        this.date = date;
+        this.time = time;
         this.isAvailable = isAvailable;
-        this.isCancelled = false;
-        this.clientId = null; // No client assigned initially
     }
 
-    public String getAppointmentId() {
-        return appointmentId;
-    }
+    public String getId() { return id; }
+    public String getUserId() { return userId; }
+    public String getTreatment() { return treatment; }
+    public String getDate() { return date; }
+    public String getTime() { return time; }
+    public int getIsAvailable() { return isAvailable; }
 
-    public String getClientId() {
-        return clientId;
-    }
-
-    public void setClientId(String clientId) {
-        this.clientId = clientId;
-        this.isAvailable = false; // Once a client is assigned, the slot is no longer available
-    }
-
-    public String getTreatmentId() {
-        return treatmentId;
-    }
-
-    public String getStartTime() {
-        return startTime;
-    }
-
-    public String getEndTime() {
-        return endTime;
-    }
-
-    public boolean isCancelled() {
-        return isCancelled;
-    }
-
-    public boolean isAvailable() {
-        return isAvailable;
-    }
-
-    public void cancelAppointment() {
-        this.isCancelled = true;
-        this.isAvailable = true; // Make the slot available again if canceled
-        this.clientId = null; // Remove the client
-    }
+    public void setIsAvailable(int isAvailable) { this.isAvailable = isAvailable; }
 }

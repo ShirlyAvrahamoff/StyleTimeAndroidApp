@@ -41,6 +41,9 @@
         <action
             android:id="@+id/action_clientHomeFragment_to_bookAppointmentFragment"
             app:destination="@id/bookAppointmentFragment" />
+        <action
+            android:id="@+id/action_clientHomeFragment_to_allAppointmentsFragment"
+            app:destination="@id/allAppointmentsFragment" />
     </fragment>
 
     <!-- Admin Home Screen -->
@@ -58,6 +61,19 @@
         tools:layout="@layout/fragment_book_appointment">
         <action
             android:id="@+id/action_bookAppointmentFragment_to_clientHomeFragment"
+            app:destination="@id/clientHomeFragment"
+            app:popUpTo="@id/clientHomeFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <!-- All Appointments Screen -->
+    <fragment
+        android:id="@+id/allAppointmentsFragment"
+        android:name="com.example.styletimeandroidapp.fragments.AllAppointmentsFragment"
+        android:label="All Appointments"
+        tools:layout="@layout/fragment_all_appointments">
+        <action
+            android:id="@+id/action_allAppointmentsFragment_to_clientHomeFragment"
             app:destination="@id/clientHomeFragment" />
     </fragment>
 

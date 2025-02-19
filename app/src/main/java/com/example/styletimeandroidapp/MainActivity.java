@@ -1,4 +1,4 @@
-package com.example.styletimeandroidapp.activities;
+package com.example.styletimeandroidapp;
 
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,16 +21,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Remove ActionBar if exists
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().hide();
-        }
-
         // Initialize Firebase
         auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        // Get NavController from NavHostFragment
+        // Get NavController from NavHostFragment safely
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = fragmentManager.findFragmentById(R.id.nav_host_fragment);
 

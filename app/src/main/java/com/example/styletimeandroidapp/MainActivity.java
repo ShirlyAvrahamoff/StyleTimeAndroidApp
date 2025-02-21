@@ -9,6 +9,7 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.styletimeandroidapp.R;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.BuildConfig;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class MainActivity extends AppCompatActivity {
@@ -33,6 +34,10 @@ public class MainActivity extends AppCompatActivity {
             navController = ((NavHostFragment) fragment).getNavController();
         } else {
             throw new IllegalStateException("NavHostFragment not found!");
+        }
+        if (BuildConfig.DEBUG) {  // רק בזמן פיתוח
+            FirebaseAuth.getInstance().useEmulator("10.0.2.2", 9099);
+            FirebaseFirestore.getInstance().useEmulator("10.0.2.2", 8080);
         }
     }
 }

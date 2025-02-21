@@ -41,9 +41,6 @@
         <action
             android:id="@+id/action_clientHomeFragment_to_bookAppointmentFragment"
             app:destination="@id/bookAppointmentFragment" />
-        <action
-            android:id="@+id/action_clientHomeFragment_to_allAppointmentsFragment"
-            app:destination="@id/allAppointmentsFragment" />
     </fragment>
 
     <!-- 🏠 Admin Home Screen -->
@@ -73,17 +70,6 @@
             app:popUpToInclusive="true" />
     </fragment>
 
-    <!-- 📋 All Appointments Screen (Client) -->
-    <fragment
-        android:id="@+id/allAppointmentsFragment"
-        android:name="com.example.styletimeandroidapp.fragments.AllAppointmentsFragment"
-        android:label="All Appointments"
-        tools:layout="@layout/fragment_all_appointments">
-        <action
-            android:id="@+id/action_allAppointmentsFragment_to_clientHomeFragment"
-            app:destination="@id/clientHomeFragment" />
-    </fragment>
-
     <!-- 📆 Daily Schedule Screen (Admin) -->
     <fragment
         android:id="@+id/dailyScheduleFragment"
@@ -104,6 +90,20 @@
         <action
             android:id="@+id/action_appointmentManagementFragment_to_adminHomeFragment"
             app:destination="@id/adminHomeFragment" />
+        <action
+            android:id="@+id/action_appointmentManagementFragment_to_passedAppointmentFragment"
+            app:destination="@id/passedAppointmentFragment" />
+    </fragment>
+
+    <!-- ✅ Passed Appointments Screen (New Fragment) -->
+    <fragment
+        android:id="@+id/passedAppointmentFragment"
+        android:name="com.example.styletimeandroidapp.fragments.PassedAppointmentFragment"
+        android:label="Passed Appointments"
+        tools:layout="@layout/fragment_passed_appointment">
+        <action
+            android:id="@+id/action_passedAppointmentFragment_to_appointmentManagementFragment"
+            app:destination="@id/appointmentManagementFragment" />
     </fragment>
 
 </navigation>

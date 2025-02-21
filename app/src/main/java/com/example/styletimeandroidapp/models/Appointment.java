@@ -11,7 +11,7 @@ import java.util.Locale;
 public class Appointment {
     private String id;
     private String userId;
-    private String clientName; // Added for manager view
+    private String clientName; // Used for manager view
     private String treatment;
     private String date; // Stored as dd/MM/yyyy
     private String time;
@@ -67,6 +67,14 @@ public class Appointment {
 
     /**
      * Constructor with parsed date (for advanced sorting).
+     *
+     * @param id          Appointment ID.
+     * @param userId      User ID who booked the appointment.
+     * @param treatment   Treatment name.
+     * @param date        Appointment date.
+     * @param time        Appointment time.
+     * @param isAvailable Availability status.
+     * @param parsedDate  Parsed Date object for sorting.
      */
     public Appointment(String id, String userId, String treatment, String date, String time, int isAvailable, Date parsedDate) {
         this.id = id;

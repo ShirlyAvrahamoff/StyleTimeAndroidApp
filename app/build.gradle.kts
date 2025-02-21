@@ -1,6 +1,6 @@
 plugins {
-    id("com.android.application")
-    id("com.google.gms.google-services")
+        id("com.android.application")
+        id("com.google.gms.google-services")
 }
 
 android {
@@ -34,33 +34,28 @@ android {
 }
 
 dependencies {
-    // Core Android Components
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
     implementation("androidx.cardview:cardview:1.0.0")
-    implementation("androidx.core:core-splashscreen:1.0.1")
-    implementation("androidx.recyclerview:recyclerview:1.3.2")
-    implementation("androidx.fragment:fragment-ktx:1.6.2")
-
-    // Material Calendar View
     implementation("com.prolificinteractive:material-calendarview:1.4.3")
 
-    // Firebase
     implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore")
-    implementation("com.google.firebase:firebase-analytics")
 
-    // Google Play Services Auth
-    implementation("com.google.android.gms:play-services-auth:20.7.0")
-
-    // Navigation Components
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
 
-    // Testing Libraries
+    // הוספת ספריות נדרשות
+    implementation("com.google.android.gms:play-services-safetynet:17.0.1")  // עבור reCAPTCHA
+    implementation("com.google.android.gms:play-services-auth:20.7.0")       // עבור Google Play Services
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")   // עבור refresh מסך
+    implementation("com.google.firebase:firebase-analytics")                  // עבור Firebase Analytics
+    implementation("com.google.firebase:firebase-auth:22.3.0")
+    implementation("com.google.firebase:firebase-firestore:24.10.0")
+    implementation("com.google.android.gms:play-services-base:18.5.0")
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

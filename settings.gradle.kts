@@ -1,12 +1,6 @@
 pluginManagement {
     repositories {
-        google {
-            content {
-                includeGroupByRegex("com\\.android.*")
-                includeGroupByRegex("com\\.google.*")
-                includeGroupByRegex("androidx.*")
-            }
-        }
+        google()  // שינוי זה - הסרת המגבלות
         mavenCentral()
         gradlePluginPortal()
     }
@@ -21,4 +15,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "StyleTimeAndroidApp"
 include(":app")
- 

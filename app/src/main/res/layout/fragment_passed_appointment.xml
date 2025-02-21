@@ -9,23 +9,14 @@
         android:id="@+id/emptyStateText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="No appointments found"
+        android:text="No past appointments found"
         android:textAlignment="center"
         android:visibility="visible" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/appointmentsRecyclerView"
+        android:id="@+id/passedAppointmentsRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="match_parent"
         android:visibility="gone" />
-
-    <!-- New Button for Navigating to Passed Appointments -->
-    <Button
-        android:id="@+id/btnViewPassedAppointments"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="View Passed Appointments"
-        android:layout_marginTop="16dp" />
 
 </LinearLayout>

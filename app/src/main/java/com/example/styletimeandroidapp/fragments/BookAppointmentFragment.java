@@ -226,23 +226,57 @@ public class BookAppointmentFragment extends Fragment {
         String userId = user.getUid();
         String appointmentId = db.collection("appointments").document().getId();
 
-        Map<String, Object> appointmentData = new HashMap<>();
-        appointmentData.put("id", appointmentId);
-        appointmentData.put("userId", userId);
-        appointmentData.put("treatment", selectedTreatment.getName());
-        appointmentData.put("date", calendarView.getSelectedDate().getDate().toString());
-        appointmentData.put("time", selectedAppointment);
-        appointmentData.put("isAvailable", 1); // ✅ מסמן שהתור תפוס
+        // First, get the user's name
+        db.collection("users").document(userId)
+                .get()
+                .addOnSuccessListener(userDoc -> {
+                    // Get the client name or use "Unknown" as fallback
+                    String clientName = userDoc.getString("name");
+                    if (clientName == null || clientName.isEmpty()) {
+                        clientName = "Unknown";
+                    }
 
-        db.collection("appointments").document(appointmentId)
-                .set(appointmentData)
-                .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(getContext(), "Appointment booked successfully!", Toast.LENGTH_SHORT).show();
-                    requireActivity().getSupportFragmentManager().popBackStack();
+                    // Create appointment data including client name
+                    Map<String, Object> appointmentData = new HashMap<>();
+                    appointmentData.put("id", appointmentId);
+                    appointmentData.put("userId", userId);
+                    appointmentData.put("clientName", clientName); // Add client name to appointment
+                    appointmentData.put("treatment", selectedTreatment.getName());
+                    appointmentData.put("date", calendarView.getSelectedDate().getDate().toString());
+                    appointmentData.put("time", selectedAppointment);
+                    appointmentData.put("isAvailable", 1); // ✅ מסמן שהתור תפוס
+
+                    // Save to Firestore
+                    db.collection("appointments").document(appointmentId)
+                            .set(appointmentData)
+                            .addOnSuccessListener(aVoid -> {
+                                Toast.makeText(getContext(), "Appointment booked successfully!", Toast.LENGTH_SHORT).show();
+                                requireActivity().getSupportFragmentManager().popBackStack();
+                            })
+                            .addOnFailureListener(e ->
+                                    Toast.makeText(getContext(), "Failed to book appointment!", Toast.LENGTH_SHORT).show()
+                            );
                 })
-                .addOnFailureListener(e ->
-                        Toast.makeText(getContext(), "Failed to book appointment!", Toast.LENGTH_SHORT).show()
-                );
-    }
+                .addOnFailureListener(e -> {
+                    // If we can't get the user name, still save the appointment but without name
+                    Map<String, Object> appointmentData = new HashMap<>();
+                    appointmentData.put("id", appointmentId);
+                    appointmentData.put("userId", userId);
+                    appointmentData.put("clientName", "Unknown"); // Default value
+                    appointmentData.put("treatment", selectedTreatment.getName());
+                    appointmentData.put("date", calendarView.getSelectedDate().getDate().toString());
+                    appointmentData.put("time", selectedAppointment);
+                    appointmentData.put("isAvailable", 1);
 
+                    db.collection("appointments").document(appointmentId)
+                            .set(appointmentData)
+                            .addOnSuccessListener(aVoid -> {
+                                Toast.makeText(getContext(), "Appointment booked successfully!", Toast.LENGTH_SHORT).show();
+                                requireActivity().getSupportFragmentManager().popBackStack();
+                            })
+                            .addOnFailureListener(error ->
+                                    Toast.makeText(getContext(), "Failed to book appointment!", Toast.LENGTH_SHORT).show()
+                            );
+                });
+    }
 }

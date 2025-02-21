@@ -46,13 +46,29 @@
             app:destination="@id/allAppointmentsFragment" />
     </fragment>
 
-    <!-- Admin Home Screen -->
     <fragment
         android:id="@+id/adminHomeFragment"
         android:name="com.example.styletimeandroidapp.fragments.AdminHomeFragment"
         android:label="Admin Home"
-        tools:layout="@layout/fragment_admin_home" />
+        tools:layout="@layout/fragment_admin_home">
+        <action
+            android:id="@+id/action_adminHomeFragment_to_dailyScheduleFragment"
+            app:destination="@id/dailyScheduleFragment" />
+        <action
+            android:id="@+id/action_adminHomeFragment_to_appointmentManagementFragment"
+            app:destination="@id/appointmentManagementFragment" />
+    </fragment>
 
+    <!-- Daily Schedule Screen - חדש -->
+    <fragment
+        android:id="@+id/dailyScheduleFragment"
+        android:name="com.example.styletimeandroidapp.fragments.DailyScheduleFragment"
+        android:label="Daily Schedule"
+        tools:layout="@layout/fragment_daily_schedule">
+        <action
+            android:id="@+id/action_dailyScheduleFragment_to_adminHomeFragment"
+            app:destination="@id/adminHomeFragment" />
+    </fragment>
     <!-- Appointment Booking Screen -->
     <fragment
         android:id="@+id/bookAppointmentFragment"
@@ -75,6 +91,31 @@
         <action
             android:id="@+id/action_allAppointmentsFragment_to_clientHomeFragment"
             app:destination="@id/clientHomeFragment" />
+    </fragment>
+
+    <!-- Appointment Management Screen -->
+    <fragment
+        android:id="@+id/appointmentManagementFragment"
+        android:name="com.example.styletimeandroidapp.fragments.AppointmentManagementFragment"
+        android:label="Appointment Management"
+        tools:layout="@layout/fragment_appointment_management">
+        <action
+            android:id="@+id/action_appointmentManagementFragment_to_adminHomeFragment"
+            app:destination="@id/adminHomeFragment" />
+        <action
+            android:id="@+id/action_appointmentManagementFragment_to_passedAppointmentFragment"
+            app:destination="@id/passedAppointmentFragment" /> <!-- New action -->
+    </fragment>
+
+    <!-- Passed Appointments Screen (New Fragment) -->
+    <fragment
+        android:id="@+id/passedAppointmentFragment"
+        android:name="com.example.styletimeandroidapp.fragments.PassedAppointmentFragment"
+        android:label="Passed Appointments"
+        tools:layout="@layout/fragment_passed_appointment">
+        <action
+            android:id="@+id/action_passedAppointmentFragment_to_appointmentManagementFragment"
+            app:destination="@id/appointmentManagementFragment" /> <!-- Back action -->
     </fragment>
 
 </navigation>

@@ -1,32 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:padding="24dp"
-    android:background="@color/background">
+    android:padding="16dp">
 
-    <!-- Welcome text for admin -->
+    <!-- Welcome Text -->
     <TextView
         android:id="@+id/welcomeText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello, Admin!"
-        android:textSize="22sp"
+        android:text="Hello, "
+        android:textSize="24sp"
         android:textStyle="bold"
-        android:textColor="@color/primary"
-        android:paddingBottom="16dp" />
+        android:layout_marginTop="32dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- Section for displaying all appointments -->
-    <TextView
-        android:id="@+id/allAppointmentsText"
+    <!-- Daily Schedule Button -->
+    <Button
+        android:id="@+id/dailyScheduleButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Loading all appointments..."
+        android:text="Daily Schedule"
         android:padding="16dp"
-        android:background="@drawable/rounded_box"
-        android:textColor="@color/textColor"
-        android:textSize="16sp"/>
+        android:layout_marginTop="64dp"
+        app:layout_constraintTop_toBottomOf="@id/welcomeText"/>
 
-</LinearLayout>
+    <!-- Appointment Management Button -->
+    <Button
+        android:id="@+id/appointmentManagementButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Appointment Management"
+        android:padding="16dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/dailyScheduleButton"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

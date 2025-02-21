@@ -1,6 +1,6 @@
 package com.example.styletimeandroidapp.adapters;
 
-import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,16 +13,28 @@ import com.example.styletimeandroidapp.R;
 
 import java.util.List;
 
+/**
+ * Adapter for displaying available appointment time slots.
+ */
 public class AvailableAppointmentsAdapter extends RecyclerView.Adapter<AvailableAppointmentsAdapter.ViewHolder> {
 
-    private final List<String> appointments;
-    private final OnItemClickListener listener;
+    private List<String> appointments; // List of time slots
+    private OnItemClickListener listener;
     private int selectedPosition = RecyclerView.NO_POSITION;
 
+    /**
+     * Interface to handle time slot selection.
+     */
     public interface OnItemClickListener {
-        void onItemClick(String appointment);
+        void onItemClick(String appointmentTime);
     }
 
+    /**
+     * Constructor for AvailableAppointmentsAdapter.
+     *
+     * @param appointments List of available time slots.
+     * @param listener     Listener for handling selection.
+     */
     public AvailableAppointmentsAdapter(List<String> appointments, OnItemClickListener listener) {
         this.appointments = appointments;
         this.listener = listener;
@@ -31,28 +43,30 @@ public class AvailableAppointmentsAdapter extends RecyclerView.Adapter<Available
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_available_appointment, parent, false);
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_available_appointment, parent, false);
         return new ViewHolder(view);
     }
 
+    /**
+     * Binds time slots to RecyclerView and manages selection highlighting.
+     */
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        String appointment = appointments.get(position);
-        holder.timeText.setText(appointment);
+        String time = appointments.get(position);
 
-        // שינוי צבע הכפתור לפי בחירה
-        holder.itemView.setBackgroundResource(position == selectedPosition ?
-                R.drawable.selected_time_background : R.drawable.default_time_background);
+        // Display the time
+        holder.timeText.setText(time);
 
+        // Highlight selected time slot
+        holder.itemView.setBackgroundColor(selectedPosition == position ? Color.LTGRAY : Color.TRANSPARENT);
+
+        // Click listener for time slot selection
         holder.itemView.setOnClickListener(v -> {
-            int previousPosition = selectedPosition;
-            selectedPosition = holder.getAdapterPosition();
-
-            // לעדכן רק את הכפתור הישן והחדש כדי לשפר ביצועים
-            notifyItemChanged(previousPosition);
             notifyItemChanged(selectedPosition);
-
-            listener.onItemClick(appointment);
+            selectedPosition = holder.getAdapterPosition();
+            notifyItemChanged(selectedPosition);
+            listener.onItemClick(time); // Pass selected time to listener
         });
     }
 
@@ -61,10 +75,13 @@ public class AvailableAppointmentsAdapter extends RecyclerView.Adapter<Available
         return appointments.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    /**
+     * ViewHolder for available time slots.
+     */
+    static class ViewHolder extends RecyclerView.ViewHolder {
         TextView timeText;
 
-        public ViewHolder(@NonNull View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
             timeText = itemView.findViewById(R.id.appointmentTimeText);
         }

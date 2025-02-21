@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     app:startDestination="@id/loginFragment">
 
-    <!-- Login Screen -->
+    <!-- 🔑 Login Screen -->
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.example.styletimeandroidapp.fragments.LoginFragment"
@@ -21,7 +21,7 @@
             app:destination="@id/adminHomeFragment" />
     </fragment>
 
-    <!-- Registration Screen -->
+    <!-- 📝 Registration Screen -->
     <fragment
         android:id="@+id/registerFragment"
         android:name="com.example.styletimeandroidapp.fragments.RegisterFragment"
@@ -32,7 +32,7 @@
             app:destination="@id/loginFragment" />
     </fragment>
 
-    <!-- Client Home Screen -->
+    <!-- 👤 Client Home Screen -->
     <fragment
         android:id="@+id/clientHomeFragment"
         android:name="com.example.styletimeandroidapp.fragments.ClientHomeFragment"
@@ -46,14 +46,21 @@
             app:destination="@id/allAppointmentsFragment" />
     </fragment>
 
-    <!-- Admin Home Screen -->
+    <!-- 🏠 Admin Home Screen -->
     <fragment
         android:id="@+id/adminHomeFragment"
         android:name="com.example.styletimeandroidapp.fragments.AdminHomeFragment"
         android:label="Admin Home"
-        tools:layout="@layout/fragment_admin_home" />
+        tools:layout="@layout/fragment_admin_home">
+        <action
+            android:id="@+id/action_adminHomeFragment_to_dailyScheduleFragment"
+            app:destination="@id/dailyScheduleFragment" />
+        <action
+            android:id="@+id/action_adminHomeFragment_to_appointmentManagementFragment"
+            app:destination="@id/appointmentManagementFragment" />
+    </fragment>
 
-    <!-- Appointment Booking Screen -->
+    <!-- 📅 Appointment Booking Screen -->
     <fragment
         android:id="@+id/bookAppointmentFragment"
         android:name="com.example.styletimeandroidapp.fragments.BookAppointmentFragment"
@@ -66,7 +73,7 @@
             app:popUpToInclusive="true" />
     </fragment>
 
-    <!-- All Appointments Screen -->
+    <!-- 📋 All Appointments Screen (Client) -->
     <fragment
         android:id="@+id/allAppointmentsFragment"
         android:name="com.example.styletimeandroidapp.fragments.AllAppointmentsFragment"
@@ -75,6 +82,28 @@
         <action
             android:id="@+id/action_allAppointmentsFragment_to_clientHomeFragment"
             app:destination="@id/clientHomeFragment" />
+    </fragment>
+
+    <!-- 📆 Daily Schedule Screen (Admin) -->
+    <fragment
+        android:id="@+id/dailyScheduleFragment"
+        android:name="com.example.styletimeandroidapp.fragments.DailyScheduleFragment"
+        android:label="Daily Schedule"
+        tools:layout="@layout/fragment_daily_schedule">
+        <action
+            android:id="@+id/action_dailyScheduleFragment_to_adminHomeFragment"
+            app:destination="@id/adminHomeFragment" />
+    </fragment>
+
+    <!-- ⚙️ Appointment Management Screen (Admin) -->
+    <fragment
+        android:id="@+id/appointmentManagementFragment"
+        android:name="com.example.styletimeandroidapp.fragments.AppointmentManagementFragment"
+        android:label="Appointment Management"
+        tools:layout="@layout/fragment_appointment_management">
+        <action
+            android:id="@+id/action_appointmentManagementFragment_to_adminHomeFragment"
+            app:destination="@id/adminHomeFragment" />
     </fragment>
 
 </navigation>

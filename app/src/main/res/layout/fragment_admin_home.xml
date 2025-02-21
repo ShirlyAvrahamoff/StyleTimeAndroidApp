@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:gravity="center"
     android:padding="24dp"
-    android:background="@color/background">
+    android:background="@color/white">
 
     <!-- Welcome text for admin -->
     <TextView
@@ -26,7 +26,7 @@
         android:text="Loading all appointments..."
         android:padding="16dp"
         android:background="@drawable/rounded_box"
-        android:textColor="@color/textColor"
+        android:textColor="@color/black"
         android:textSize="16sp"/>
 
 </LinearLayout>

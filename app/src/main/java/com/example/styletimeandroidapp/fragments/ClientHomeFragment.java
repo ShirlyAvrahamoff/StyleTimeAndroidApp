@@ -1,11 +1,11 @@
 package com.example.styletimeandroidapp.fragments;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,138 +22,143 @@ import com.example.styletimeandroidapp.adapters.AppointmentsAdapter;
 import com.example.styletimeandroidapp.models.Appointment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class ClientHomeFragment extends Fragment {
 
-    private TextView helloText, upcomingAppointmentsTitle;
     private RecyclerView recyclerViewAppointments;
+    private TextView helloText;
+    private TextView noAppointmentsMessage;
     private CardView noAppointmentsCard;
-    private Button bookAppointmentButton;
-
+    private AppointmentsAdapter adapter;
+    private List<Appointment> appointmentList = new ArrayList<>();
     private FirebaseAuth auth;
     private FirebaseFirestore db;
-    private AppointmentsAdapter adapter;
-    private List<Appointment> appointmentList;
-    private boolean isAdmin = false;  // משתנה לבדוק האם המשתמש הוא מנהל
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_client_home, container, false);
 
-        // אתחול Firebase
         auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        // אתחול רכיבי UI
-        helloText = view.findViewById(R.id.helloText);
-        bookAppointmentButton = view.findViewById(R.id.bookAppointmentButton);
         recyclerViewAppointments = view.findViewById(R.id.recyclerViewAppointments);
+        helloText = view.findViewById(R.id.helloText);
         noAppointmentsCard = view.findViewById(R.id.noAppointmentsCard);
-        upcomingAppointmentsTitle = view.findViewById(R.id.upcomingAppointmentsTitle);
+        noAppointmentsMessage = view.findViewById(R.id.noAppointmentsMessage);
 
-        recyclerViewAppointments.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerViewAppointments.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        appointmentList = new ArrayList<>();
-        adapter = new AppointmentsAdapter(appointmentList);
+        adapter = new AppointmentsAdapter(appointmentList, this::showDeleteConfirmationDialog);
         recyclerViewAppointments.setAdapter(adapter);
 
-        // טעינת שם המשתמש + בדיקת האם הוא מנהל
-        loadUserNameAndCheckAdmin();
+        loadUserName();
+        listenToAppointments();
 
-        // טעינת התורים של המשתמש
-        loadUserAppointments();
-
-        // מעבר להזמנת תור חדש
-        bookAppointmentButton.setOnClickListener(v ->
+        view.findViewById(R.id.bookAppointmentButton).setOnClickListener(v ->
                 Navigation.findNavController(v).navigate(R.id.action_clientHomeFragment_to_bookAppointmentFragment)
         );
 
         return view;
     }
 
-    private void loadUserNameAndCheckAdmin() {
-        FirebaseUser currentUser = auth.getCurrentUser();
-        if (currentUser != null) {
-            String userId = currentUser.getUid();
-
-            db.collection("users").document(userId)
+    private void loadUserName() {
+        FirebaseUser user = auth.getCurrentUser();
+        if (user != null) {
+            db.collection("users").document(user.getUid())
                     .get()
-                    .addOnSuccessListener(document -> {
-                        if (document.exists()) {
-                            String name = document.getString("name");
-                            isAdmin = Boolean.TRUE.equals(document.getBoolean("isAdmin")); // בדיקה אם המשתמש הוא מנהל
-
-                            if (name != null && !name.isEmpty()) {
-                                helloText.setText("Hello, " + name + "!");
-                            } else {
-                                helloText.setText("Hello, User!");
-                            }
-
-                            // לאחר שאימתנו אם הוא מנהל, טוענים את התורים
-                            loadUserAppointments();
-                        }
+                    .addOnSuccessListener(documentSnapshot -> {
+                        String name = documentSnapshot.getString("name");
+                        helloText.setText("Hello, " + name + "!");
                     })
-                    .addOnFailureListener(e -> Log.e("ClientHomeFragment", "Failed to load user data", e));
+                    .addOnFailureListener(e -> Log.e("Firestore", "Failed to fetch user name", e));
         }
     }
 
-    private void loadUserAppointments() {
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (currentUser == null) return;
-
-        String userId = currentUser.getUid();
+    private void listenToAppointments() {
+        FirebaseUser currentUser = auth.getCurrentUser();
+        if (currentUser == null) {
+            Toast.makeText(getActivity(), "User not logged in", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         db.collection("appointments")
-                .whereEqualTo("userId", userId)
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    appointmentList.clear();
-                    for (DocumentSnapshot doc : queryDocumentSnapshots) {
-                        String appointmentId = doc.getId();
-                        String treatment = doc.getString("treatment");
-                        String date = doc.getString("date");
-                        String time = doc.getString("time");
-                        Long isAvailableLong = doc.getLong("isAvailable");
-                        int isAvailable = (isAvailableLong != null) ? isAvailableLong.intValue() : 0; // ברירת מחדל 0
-
-                        if (treatment != null && date != null && time != null) {
-                            appointmentList.add(new Appointment(appointmentId, userId, treatment, date, time, isAvailable));
-                        }
+                .whereEqualTo("userId", currentUser.getUid())
+                .whereEqualTo("isAvailable", 1)
+                .addSnapshotListener((snapshots, e) -> {
+                    if (e != null) {
+                        Log.w("Firestore", "Listen failed.", e);
+                        return;
                     }
+
+                    appointmentList.clear();
+                    for (QueryDocumentSnapshot doc : snapshots) {
+                        Appointment appointment = doc.toObject(Appointment.class);
+                        appointmentList.add(appointment);
+                    }
+
+                    // ✅ Sort appointments by Date and Time
+                    Collections.sort(appointmentList, (a1, a2) -> {
+                        try {
+                            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+                            Date date1 = sdf.parse(a1.getDate() + " " + a1.getTime());
+                            Date date2 = sdf.parse(a2.getDate() + " " + a2.getTime());
+                            return date1.compareTo(date2);
+                        } catch (ParseException ex) {
+                            Log.e("SortingError", "Error while sorting appointments", ex);
+                            return 0;
+                        }
+                    });
                     adapter.notifyDataSetChanged();
 
-                    if (appointmentList.isEmpty()) {
-                        recyclerViewAppointments.setVisibility(View.GONE);
-                        noAppointmentsCard.setVisibility(View.VISIBLE);
-                        upcomingAppointmentsTitle.setVisibility(View.GONE);
-                    } else {
-                        recyclerViewAppointments.setVisibility(View.VISIBLE);
-                        noAppointmentsCard.setVisibility(View.GONE);
-                        upcomingAppointmentsTitle.setVisibility(View.VISIBLE);
-                    }
-                })
-                .addOnFailureListener(e -> Log.e("ClientHomeFragment", "Error loading appointments", e));
-    }
 
-    private void deleteAppointment(String appointmentId) {
-        db.collection("appointments").document(appointmentId)
-                .delete()
-                .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(getContext(), "Appointment canceled successfully!", Toast.LENGTH_SHORT).show();
-                    loadUserAppointments();
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(getContext(), "Failed to cancel appointment", Toast.LENGTH_SHORT).show();
-                    Log.e("ClientHomeFragment", "Error deleting appointment", e);
+                    if (appointmentList.isEmpty()) {
+                        noAppointmentsMessage.setVisibility(View.VISIBLE);
+                    } else {
+                        noAppointmentsMessage.setVisibility(View.GONE);
+                    }
                 });
     }
 
+    private String formatDateWithDay(String originalDate) {
+        try {
+            SimpleDateFormat originalFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            SimpleDateFormat desiredFormat = new SimpleDateFormat("EEEE, dd/MM/yyyy", Locale.getDefault());
 
+            Date date = originalFormat.parse(originalDate);
+            return desiredFormat.format(date); // Example: "Tuesday, 20/02/2025"
+        } catch (ParseException e) {
+            Log.e("DateFormatError", "Error formatting date", e);
+            return originalDate;
+        }
+    }
+
+    private void showDeleteConfirmationDialog(Appointment appointment) {
+        new AlertDialog.Builder(getContext())
+                .setTitle("Cancel Appointment")
+                .setMessage("Are you sure you want to cancel this appointment?")
+                .setPositiveButton("Yes", (dialog, which) -> cancelAppointment(appointment))
+                .setNegativeButton("No", null)
+                .show();
+    }
+
+    private void cancelAppointment(Appointment appointment) {
+        db.collection("appointments").document(appointment.getId())
+                .delete()
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(getActivity(), "Appointment canceled", Toast.LENGTH_SHORT).show();
+                    listenToAppointments();
+                })
+                .addOnFailureListener(e -> Toast.makeText(getActivity(), "Failed to cancel appointment", Toast.LENGTH_SHORT).show());
+    }
 }

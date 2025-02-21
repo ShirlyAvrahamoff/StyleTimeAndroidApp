@@ -14,7 +14,7 @@
 
         <activity
             android:name=".activities.MainActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:theme="@style/Theme.StyleTimeAndroidApp.Splash"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,11 +22,11 @@
             </intent-filter>
         </activity>
 
-        <!-- פתרון לקונפליקט עם Firebase Auth -->
+
+
         <activity
             android:name="com.google.firebase.auth.internal.GenericIdpActivity"
             tools:replace="android:exported"
             android:exported="true"/>
-
     </application>
 </manifest>

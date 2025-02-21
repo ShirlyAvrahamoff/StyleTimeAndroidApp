@@ -7,11 +7,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+
 import com.example.styletimeandroidapp.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -39,65 +42,68 @@ public class LoginFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
+        // Initialize EditText fields
         emailEditText = view.findViewById(R.id.emailEditText);
         passwordEditText = view.findViewById(R.id.passwordEditText);
 
-        view.findViewById(R.id.login_button).setOnClickListener(v -> loginUser());
-        view.findViewById(R.id.go_to_register).setOnClickListener(v -> navController.navigate(R.id.registerFragment));
+        // Login Button Listener
+        view.findViewById(R.id.login_button).setOnClickListener(v -> {
+            String email = emailEditText.getText().toString().trim();
+            String password = passwordEditText.getText().toString().trim();
+
+            // Validate Input Fields
+            if (email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(getContext(), "Please enter both email and password", Toast.LENGTH_SHORT).show();
+            } else {
+                loginUser(email, password);  // ✅ Pass the required arguments
+            }
+        });
+
+        // Navigate to Register Fragment
+        view.findViewById(R.id.go_to_register).setOnClickListener(v ->
+                navController.navigate(R.id.registerFragment)
+        );
     }
 
-    private void loginUser() {
-        String email = emailEditText.getText().toString().trim();
-        String password = passwordEditText.getText().toString().trim();
-
-        if (email.isEmpty() || password.isEmpty()) {
-            showErrorDialog("Error", "Email and password cannot be empty.");
-            return;
-        }
-
+    /**
+     * Logs in the user using Firebase Authentication.
+     */
+    private void loginUser(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        Log.d("LoginFragment", "Login successful, checking role...");
-                        checkUserRole();
-                    } else {
-                        Log.e("LoginFragment", "Login failed", task.getException());
-                        showErrorDialog("Login Failed", "Invalid email or password.");
-                    }
-                });
-    }
-
-    private void checkUserRole() {
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser == null) {
-            Log.e("LoginFragment", "No user found after login");
-            return;
-        }
-
-        db.collection("users").document(currentUser.getUid()).get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && task.getResult() != null) {
-                        DocumentSnapshot document = task.getResult();
-                        if (document.exists()) {
-                            String role = document.getString("role");
-                            if ("admin".equals(role)) {
-                                Log.d("LoginFragment", "User is admin, navigating to AdminHomeFragment");
-                                navController.navigate(R.id.adminHomeFragment);
-                            } else {
-                                Log.d("LoginFragment", "User is client, navigating to ClientHomeFragment");
-                                navController.navigate(R.id.clientHomeFragment);
-                            }
-                        } else {
-                            Log.e("LoginFragment", "User role not found");
-                            showErrorDialog("Error", "Failed to retrieve user role.");
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        if (user != null) {
+                            checkUserRole(user.getUid());  // ✅ Check if user is admin or client
                         }
                     } else {
-                        Log.e("LoginFragment", "Failed to fetch user role", task.getException());
-                        showErrorDialog("Error", "Failed to retrieve user data.");
+                        Toast.makeText(getContext(), "Login failed. Please try again.", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
+    /**
+     * Checks if the logged-in user is an admin or a client.
+     */
+    private void checkUserRole(String userId) {
+        db.collection("users").document(userId).get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    Boolean isAdmin = documentSnapshot.getBoolean("isAdmin");
+                    if (isAdmin != null && isAdmin) {
+                        navController.navigate(R.id.action_loginFragment_to_adminHomeFragment);  // Admin Home
+                    } else {
+                        navController.navigate(R.id.action_loginFragment_to_clientHomeFragment);  // Client Home
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("LoginFragment", "Error fetching user role", e);
+                    showErrorDialog("Error", "Unable to retrieve user information.");
+                });
+    }
+
+    /**
+     * Displays an error dialog.
+     */
     private void showErrorDialog(String title, String message) {
         new AlertDialog.Builder(requireContext())
                 .setTitle(title)

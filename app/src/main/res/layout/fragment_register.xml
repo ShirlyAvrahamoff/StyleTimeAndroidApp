@@ -1,10 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/light_gray">
+    android:background="@drawable/background">
+
+    <!-- Logo -->
+    <ImageView
+        android:id="@+id/logoImageView"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:src="@drawable/logo"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="40dp"/>
 
     <!-- Registration Card -->
     <androidx.cardview.widget.CardView
@@ -13,11 +23,11 @@
         app:cardCornerRadius="20dp"
         app:cardElevation="10dp"
         android:background="@android:color/white"
-        app:layout_constraintWidth_percent="0.85"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:alpha="0.9"
+        app:layout_constraintTop_toBottomOf="@id/logoImageView"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintWidth_percent="0.85">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -36,6 +46,7 @@
                 android:layout_gravity="center_horizontal"
                 android:paddingBottom="16dp"/>
 
+            <!-- Full Name Field -->
             <EditText
                 android:id="@+id/nameEditText"
                 android:layout_width="match_parent"
@@ -44,6 +55,7 @@
                 android:background="@drawable/input_background"
                 android:padding="12dp"/>
 
+            <!-- Email Field -->
             <EditText
                 android:id="@+id/emailEditText"
                 android:layout_width="match_parent"
@@ -54,6 +66,7 @@
                 android:padding="12dp"
                 android:layout_marginTop="8dp"/>
 
+            <!-- Phone Number Field -->
             <EditText
                 android:id="@+id/phoneEditText"
                 android:layout_width="match_parent"
@@ -64,6 +77,7 @@
                 android:padding="12dp"
                 android:layout_marginTop="8dp"/>
 
+            <!-- Password Field -->
             <EditText
                 android:id="@+id/passwordEditText"
                 android:layout_width="match_parent"
@@ -74,23 +88,23 @@
                 android:padding="12dp"
                 android:layout_marginTop="8dp"/>
 
+            <!-- Register Button -->
             <Button
                 android:id="@+id/registerButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Register"
-                android:textStyle="bold"
-                android:backgroundTint="@color/blue"
-                android:textColor="@android:color/white"
-                android:padding="12dp"
+                android:background="@drawable/rounded_button_background"
+                android:textColor="@color/white"
                 android:layout_marginTop="16dp"/>
 
+            <!-- Go to Login -->
             <TextView
                 android:id="@+id/go_to_login"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Already have an account? Sign in"
-                android:textColor="@color/blue"
+                android:textColor="@color/primary_color"
                 android:textSize="14sp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="12dp"

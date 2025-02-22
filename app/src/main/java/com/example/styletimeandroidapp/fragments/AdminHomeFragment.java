@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -50,6 +51,20 @@ public class AdminHomeFragment extends Fragment {
 
         loadAdminDetails();
 
+        Button logoutButton = view.findViewById(R.id.logoutButton);
+        logoutButton.setOnClickListener(v -> {
+            FirebaseAuth.getInstance().signOut();
+            Navigation.findNavController(v).navigate(R.id.action_adminHomeFragment_to_loginFragment);
+        });
+
+        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(),
+                new OnBackPressedCallback(true) {
+                    @Override
+                    public void handleOnBackPressed() {
+                        // Do nothing to block back press
+                    }
+                });
+
         return view;
     }
 
@@ -61,6 +76,8 @@ public class AdminHomeFragment extends Fragment {
         viewAllAppointmentsButton.setOnClickListener(v -> {
             Navigation.findNavController(v).navigate(R.id.action_adminHomeFragment_to_appointmentManagementFragment);
         });
+
+
     }
 
     private void loadAdminDetails() {

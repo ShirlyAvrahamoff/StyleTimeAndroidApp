@@ -60,7 +60,7 @@ public class AppointmentManagementFragment extends Fragment {
         emptyStateText.setVisibility(View.VISIBLE);
 
         Date currentDateTime = new Date();
-        SimpleDateFormat dateTimeFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss 'GMT'Z yyyy HH:mm", Locale.ENGLISH);
+        SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ENGLISH);
 
         db.collection("appointments")
                 .get()
@@ -71,7 +71,8 @@ public class AppointmentManagementFragment extends Fragment {
                         Long isAvailableLong = doc.getLong("isAvailable");
                         int isAvailable = isAvailableLong != null ? isAvailableLong.intValue() : 0;
 
-                        if (isAvailable == 1) {
+                        // שלוף רק תורים שנקבעו (isAvailable == 0)
+                        if (isAvailable == 0) {
                             String id = doc.getId();
                             String userId = doc.getString("userId");
                             String treatment = doc.getString("treatment");
@@ -87,7 +88,7 @@ public class AppointmentManagementFragment extends Fragment {
                             String appointmentDateTime = date + " " + time;
                             try {
                                 Date appointmentDate = dateTimeFormat.parse(appointmentDateTime);
-                                if (appointmentDate.after(currentDateTime) || appointmentDate.equals(currentDateTime)) {
+                                if (appointmentDate != null && (appointmentDate.after(currentDateTime) || appointmentDate.equals(currentDateTime))) {
                                     appointments.add(appointment);
                                 }
                             } catch (Exception e) {
@@ -96,8 +97,6 @@ public class AppointmentManagementFragment extends Fragment {
                         }
                     }
 
-                    Log.d(TAG, "Loaded " + appointments.size() + " current/future appointments");
-
                     appointments.sort((a1, a2) -> {
                         try {
                             String datetime1 = a1.getDate() + " " + a1.getTime();
@@ -105,7 +104,8 @@ public class AppointmentManagementFragment extends Fragment {
                             return dateTimeFormat.parse(datetime1).compareTo(dateTimeFormat.parse(datetime2));
                         } catch (Exception e) {
                             Log.e(TAG, "Error sorting appointments: " + e.getMessage());
-                            return 0;                         }
+                            return 0;
+                        }
                     });
 
                     if (appointments.isEmpty()) {
@@ -123,4 +123,5 @@ public class AppointmentManagementFragment extends Fragment {
                     emptyStateText.setVisibility(View.VISIBLE);
                 });
     }
+
 }

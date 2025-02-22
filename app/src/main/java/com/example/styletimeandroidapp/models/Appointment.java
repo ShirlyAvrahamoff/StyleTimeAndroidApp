@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 
 public class Appointment {
@@ -92,12 +93,14 @@ public class Appointment {
     private Date parseDate(String date, String time) {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+            sdf.setTimeZone(TimeZone.getTimeZone("Asia/Jerusalem")); // אזור זמן ישראל
             return sdf.parse(date + " " + time);
         } catch (ParseException e) {
             e.printStackTrace();
-            return new Date(); // Fallback to current date
+            return null;
         }
     }
+
 
     // Getters
     public String getId() { return id; }

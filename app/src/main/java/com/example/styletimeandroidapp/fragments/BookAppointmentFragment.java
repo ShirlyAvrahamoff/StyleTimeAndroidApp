@@ -3,7 +3,6 @@ package com.example.styletimeandroidapp.fragments;
 import android.app.AlertDialog;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,8 +37,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class BookAppointmentFragment extends Fragment {
 
@@ -77,7 +78,7 @@ public class BookAppointmentFragment extends Fragment {
         treatmentAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_dropdown_item, treatmentNames);
         treatmentSpinner.setAdapter(treatmentAdapter);
 
-        appointmentAdapter = new AvailableAppointmentsAdapter(availableAppointments, appointment -> {
+        appointmentAdapter = new AvailableAppointmentsAdapter(availableAppointments, new ArrayList<>(), appointment -> {
             selectedAppointment = appointment;
             confirmAppointmentButton.setVisibility(View.VISIBLE);
         });
@@ -101,15 +102,12 @@ public class BookAppointmentFragment extends Fragment {
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) { }
+            public void onNothingSelected(AdapterView<?> parent) {}
         });
 
         return view;
     }
 
-    /**
-     * Sets up the calendar view and its behavior.
-     */
     private void setupCalendar() {
         calendarView.state().edit()
                 .setMinimumDate(CalendarDay.today())
@@ -128,9 +126,6 @@ public class BookAppointmentFragment extends Fragment {
         });
     }
 
-    /**
-     * Loads treatments from Firestore and populates the Spinner.
-     */
     private void loadTreatments() {
         db.collection("treatments")
                 .get()
@@ -161,16 +156,12 @@ public class BookAppointmentFragment extends Fragment {
                 );
     }
 
-    /**
-     * Loads available appointments for a selected date.
-     */
     private void loadAvailableAppointments(CalendarDay date) {
         availableAppointments.clear();
 
         Calendar calendar = date.getCalendar();
         int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
 
-        //Saturday: Show "Closed" Message
         if (dayOfWeek == Calendar.SATURDAY) {
             availableTimesTitle.setText("Closed on Saturdays");
             availableTimesTitle.setVisibility(View.VISIBLE);
@@ -184,9 +175,13 @@ public class BookAppointmentFragment extends Fragment {
             confirmAppointmentButton.setVisibility(View.GONE);
         }
 
-        // Friday: Different Hours
         int startHour = (dayOfWeek == Calendar.FRIDAY) ? 8 : 10;
         int endHour = (dayOfWeek == Calendar.FRIDAY) ? 15 : 22;
+
+        List<String> allTimeSlots = new ArrayList<>();
+        for (int hour = startHour; hour < endHour; hour++) {
+            allTimeSlots.add(String.format("%02d:00", hour));
+        }
 
         db.collection("appointments")
                 .whereEqualTo("date", formatDateToFirestore(date.getDate().toString()))
@@ -194,22 +189,26 @@ public class BookAppointmentFragment extends Fragment {
                 .addOnSuccessListener(querySnapshot -> {
                     List<String> bookedTimes = new ArrayList<>();
                     for (DocumentSnapshot doc : querySnapshot) {
-                        String bookedTime = doc.getString("time");
-                        if (bookedTime != null) {
-                            bookedTimes.add(bookedTime);
+                        if (doc.getLong("isAvailable") != null && doc.getLong("isAvailable") == 0) {
+                            bookedTimes.add(doc.getString("time"));
                         }
                     }
 
-                    for (int hour = startHour; hour < endHour; hour++) {
-                        String timeSlot = String.format("%02d:00", hour);
+                    List<String> availableSlots = new ArrayList<>();
+                    for (String timeSlot : allTimeSlots) {
                         if (!bookedTimes.contains(timeSlot)) {
-                            availableAppointments.add(timeSlot);
+                            availableSlots.add(timeSlot);
                         }
                     }
 
+                    appointmentAdapter = new AvailableAppointmentsAdapter(availableSlots, bookedTimes, selectedTime -> {
+                        selectedAppointment = selectedTime;
+                        confirmAppointmentButton.setVisibility(View.VISIBLE);
+                    });
+                    availableAppointmentsRecyclerView.setAdapter(appointmentAdapter);
                     appointmentAdapter.notifyDataSetChanged();
 
-                    if (availableAppointments.isEmpty()) {
+                    if (availableSlots.isEmpty()) {
                         availableTimesTitle.setText("No Available Appointments");
                         availableAppointmentsRecyclerView.setVisibility(View.GONE);
                     }
@@ -219,9 +218,6 @@ public class BookAppointmentFragment extends Fragment {
                 );
     }
 
-    /**
-     * Handles appointment confirmation and saves it to Firestore.
-     */
     private void confirmAppointment() {
         if (selectedTreatment == null) {
             Toast.makeText(getContext(), "Please select a treatment!", Toast.LENGTH_SHORT).show();
@@ -232,7 +228,8 @@ public class BookAppointmentFragment extends Fragment {
             return;
         }
 
-        String formattedDate = formatDateToDisplay(calendarView.getSelectedDate().getDate().toString());
+        // שימוש בפורמט יפה להצגה
+        String formattedDate = formatDateToDisplay(calendarView.getSelectedDate().getDate());
 
         new AlertDialog.Builder(getContext())
                 .setTitle("Confirm Appointment")
@@ -242,22 +239,16 @@ public class BookAppointmentFragment extends Fragment {
                 .show();
     }
 
-    private String formatDateToDisplay(String rawDate) {
-        try {
-            SimpleDateFormat inputFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss 'GMT'Z yyyy", Locale.ENGLISH);
-            SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
-            Date date = inputFormat.parse(rawDate);
-            return outputFormat.format(date);
-        } catch (ParseException e) {
-            Log.e("DateFormatError", "Error formatting date", e);
-            return rawDate;
-        }
+
+    private String formatDateToDisplay(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        return sdf.format(date);
     }
 
 
     private String formatDateToFirestore(String originalDate) {
         try {
-            SimpleDateFormat originalFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            SimpleDateFormat originalFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
             SimpleDateFormat desiredFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
             Date date = originalFormat.parse(originalDate);
             return desiredFormat.format(date);
@@ -267,9 +258,7 @@ public class BookAppointmentFragment extends Fragment {
         }
     }
 
-    /**
-     * Saves the confirmed appointment to Firestore.
-     */
+
     private void saveAppointmentToFirestore() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
@@ -282,15 +271,27 @@ public class BookAppointmentFragment extends Fragment {
 
         String formattedDate = formatDateToFirestore(calendarView.getSelectedDate().getDate().toString());
 
+        Date parsedDate = null;
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+            parsedDate = sdf.parse(formattedDate + " " + selectedAppointment);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            Toast.makeText(getContext(), "Failed to parse appointment date.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Map<String, Object> appointmentData = new HashMap<>();
+        appointmentData.put("id", appointmentId);
+        appointmentData.put("userId", userId);
+        appointmentData.put("treatment", selectedTreatment.getName());
+        appointmentData.put("date", formattedDate);
+        appointmentData.put("time", selectedAppointment);
+        appointmentData.put("isAvailable", 0);
+        appointmentData.put("parsedDate", new com.google.firebase.Timestamp(parsedDate));
+
         db.collection("appointments").document(appointmentId)
-                .set(new Appointment(
-                        appointmentId,
-                        userId,
-                        selectedTreatment.getName(),
-                        formattedDate,
-                        selectedAppointment,
-                        1
-                ))
+                .set(appointmentData)
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(getContext(), "Appointment booked successfully!", Toast.LENGTH_SHORT).show();
                     requireActivity().getSupportFragmentManager().popBackStack();

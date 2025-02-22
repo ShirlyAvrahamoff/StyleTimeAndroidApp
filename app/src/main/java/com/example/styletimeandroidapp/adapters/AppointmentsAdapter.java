@@ -15,30 +15,19 @@ import com.example.styletimeandroidapp.models.Appointment;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-/**
- * Adapter for displaying booked appointments in a RecyclerView.
- */
 public class AppointmentsAdapter extends RecyclerView.Adapter<AppointmentsAdapter.ViewHolder> {
 
     private final List<Appointment> appointmentList;
     private final OnCancelClickListener cancelListener;
 
-    /**
-     * Interface to handle appointment cancellation.
-     */
     public interface OnCancelClickListener {
         void onCancel(Appointment appointment);
     }
 
-    /**
-     * Constructor for AppointmentsAdapter.
-     *
-     * @param appointmentList List of appointments.
-     * @param cancelListener  Listener for handling cancellations.
-     */
     public AppointmentsAdapter(List<Appointment> appointmentList, OnCancelClickListener cancelListener) {
         this.appointmentList = appointmentList;
         this.cancelListener = cancelListener;
@@ -52,9 +41,6 @@ public class AppointmentsAdapter extends RecyclerView.Adapter<AppointmentsAdapte
         return new ViewHolder(view);
     }
 
-    /**
-     * Binds data to each item in the RecyclerView.
-     */
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Appointment appointment = appointmentList.get(position);
@@ -63,7 +49,6 @@ public class AppointmentsAdapter extends RecyclerView.Adapter<AppointmentsAdapte
 
         String formattedDate = formatDate(appointment.getDate());
         holder.dateText.setText("Date: " + formattedDate);
-
         holder.timeText.setText("Time: " + appointment.getTime());
 
         holder.cancelButton.setOnClickListener(v -> {
@@ -78,9 +63,6 @@ public class AppointmentsAdapter extends RecyclerView.Adapter<AppointmentsAdapte
         return appointmentList.size();
     }
 
-    /**
-     * ViewHolder class for each appointment item.
-     */
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView treatmentText, dateText, timeText;
         Button cancelButton;
@@ -94,20 +76,16 @@ public class AppointmentsAdapter extends RecyclerView.Adapter<AppointmentsAdapte
         }
     }
 
-    /**
-     * Formats Firestore's raw date to "dd/MM/yyyy".
-     *
-     * @param rawDate The raw date string from Firestore.
-     * @return Formatted date or raw date if parsing fails.
-     */
     private String formatDate(String rawDate) {
         try {
-            SimpleDateFormat inputFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss 'GMT'Z yyyy", Locale.ENGLISH);
-            SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
-            return outputFormat.format(inputFormat.parse(rawDate));
+            SimpleDateFormat inputFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ENGLISH);
+            SimpleDateFormat outputFormat = new SimpleDateFormat("EEEE, dd MMMM yyyy", Locale.ENGLISH);
+            Date date = inputFormat.parse(rawDate);
+            return outputFormat.format(date);
         } catch (ParseException e) {
             Log.e("AppointmentsAdapter", "Error formatting date: " + e.getMessage());
             return rawDate;
         }
     }
+
 }

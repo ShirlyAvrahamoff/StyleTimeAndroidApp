@@ -5,17 +5,6 @@
     android:layout_height="match_parent"
     android:background="@drawable/background">
 
-    <!-- Logo -->
-    <ImageView
-        android:id="@+id/logoImageView"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:src="@drawable/logo"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="40dp"/>
-
     <!-- Registration Card -->
     <androidx.cardview.widget.CardView
         android:layout_width="0dp"
@@ -24,7 +13,8 @@
         app:cardElevation="10dp"
         android:background="@android:color/white"
         android:alpha="0.9"
-        app:layout_constraintTop_toBottomOf="@id/logoImageView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintWidth_percent="0.85">
@@ -94,8 +84,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Register"
-                android:background="@drawable/rounded_button_background"
-                android:textColor="@color/white"
+                android:backgroundTint="@color/primary_color"
+                android:textColor="@android:color/white"
                 android:layout_marginTop="16dp"/>
 
             <!-- Go to Login -->
@@ -112,4 +102,5 @@
                 android:focusable="true"/>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

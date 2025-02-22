@@ -58,7 +58,8 @@ public class DailyScheduleFragment extends Fragment {
         setupCalendarView();
         setupRecyclerView();
 
-        loadAppointmentsForDate(new Date());
+        loadAppointmentsForDate(new Date()); // טען את התאריך הנוכחי כשנכנסים
+
         return view;
     }
 
@@ -81,7 +82,6 @@ public class DailyScheduleFragment extends Fragment {
                     if (documentSnapshot.exists()) {
                         String role = documentSnapshot.getString("role");
                         isManager = "manager".equals(role) || "admin".equals(role);
-                        Log.d(TAG, "User role: " + role + ", isManager: " + isManager);
                         setupRecyclerView();
                         setupFab();
                         loadAppointmentsForDate(new Date());
@@ -89,24 +89,14 @@ public class DailyScheduleFragment extends Fragment {
                         Log.e(TAG, "User document not found");
                     }
                 })
-                .addOnFailureListener(e -> {
-                    Log.e(TAG, "Error checking role: " + e.getMessage(), e);
-                    showEmptyState();
-                });
+                .addOnFailureListener(e -> Log.e(TAG, "Error checking role", e));
     }
 
     private void setupCalendarView() {
         calendarView.setOnDateChangeListener((view, year, month, dayOfMonth) -> {
             Calendar calendar = Calendar.getInstance();
             calendar.set(year, month, dayOfMonth);
-            calendar.set(Calendar.HOUR_OF_DAY, 0);
-            calendar.set(Calendar.MINUTE, 0);
-            calendar.set(Calendar.SECOND, 0);
-            calendar.set(Calendar.MILLISECOND, 0);
-
             Date selectedDate = calendar.getTime();
-            Log.d(TAG, "Selected date from calendar UI: " + selectedDate);
-
             loadAppointmentsForDate(selectedDate);
         });
     }
@@ -122,42 +112,13 @@ public class DailyScheduleFragment extends Fragment {
             fabBook.setVisibility(View.GONE);
         } else {
             fabBook.setVisibility(View.VISIBLE);
-            fabBook.setOnClickListener(v -> {
-                Toast.makeText(getContext(), "Booking feature TBD", Toast.LENGTH_SHORT).show();
-            });
+            fabBook.setOnClickListener(v -> Toast.makeText(getContext(), "Booking feature TBD", Toast.LENGTH_SHORT).show());
         }
     }
 
-    private void loadAppointmentsForDate(Date date) {
-        String displayDate = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH).format(date);
+    private void loadAppointmentsForDate(Date selectedDate) {
+        String displayDate = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH).format(selectedDate);
         dateTitle.setText("Selected Date: " + displayDate);
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-
-        List<String> possibleDateFormats = new ArrayList<>();
-
-        SimpleDateFormat sdfGmt = new SimpleDateFormat("EEE MMM dd HH:mm:ss 'GMT+00:00' yyyy", Locale.ENGLISH);
-        sdfGmt.setTimeZone(TimeZone.getTimeZone("GMT"));
-        possibleDateFormats.add(sdfGmt.format(calendar.getTime()));
-
-        SimpleDateFormat sdfGmt2 = new SimpleDateFormat("EEE MMM dd HH:mm:ss 'GMT+02:00' yyyy", Locale.ENGLISH);
-        sdfGmt2.setTimeZone(TimeZone.getTimeZone("GMT+02:00"));
-        possibleDateFormats.add(sdfGmt2.format(calendar.getTime()));
-
-        Calendar calGmt2 = Calendar.getInstance(TimeZone.getTimeZone("GMT+02:00"));
-        calGmt2.setTime(date);
-        calGmt2.set(Calendar.HOUR_OF_DAY, 0);
-        calGmt2.set(Calendar.MINUTE, 0);
-        calGmt2.set(Calendar.SECOND, 0);
-        calGmt2.set(Calendar.MILLISECOND, 0);
-        possibleDateFormats.add(sdfGmt2.format(calGmt2.getTime()));
-
-        Log.d(TAG, "Querying for dates: " + possibleDateFormats);
 
         db.collection("appointments")
                 .get()
@@ -166,24 +127,32 @@ public class DailyScheduleFragment extends Fragment {
 
                     for (DocumentSnapshot doc : querySnapshot) {
                         String docDate = doc.getString("date");
+                        String docTime = doc.getString("time");
+                        Long isAvailableLong = doc.getLong("isAvailable");
+                        int isAvailable = isAvailableLong != null ? isAvailableLong.intValue() : 0;
 
-                        if (docDate != null && possibleDateFormats.contains(docDate)) {
-                            Long isAvailableLong = doc.getLong("isAvailable");
-                            int isAvailable = isAvailableLong != null ? isAvailableLong.intValue() : 0;
+                        if (docDate != null && docDate.equals(displayDate) && isAvailable == 0) {
+                            String id = doc.getId();
+                            String userId = doc.getString("userId");
+                            String treatment = doc.getString("treatment");
 
-                            if (isAvailable == 1) {
-                                String id = doc.getId();
-                                String userId = doc.getString("userId");
-                                String time = doc.getString("time");
-                                String treatment = doc.getString("treatment");
-
-                                Appointment appointment = new Appointment(id, userId, treatment, displayDate, time, isAvailable);
-                                appointments.add(appointment);
-                            }
+                            Appointment appointment = new Appointment(id, userId, treatment, docDate, docTime, isAvailable);
+                            appointments.add(appointment);
                         }
                     }
 
-                    Log.d(TAG, "Found " + appointments.size() + " appointments for date " + displayDate);
+                    // ✅ מיון התורים לפי השעה
+                    appointments.sort((a1, a2) -> {
+                        try {
+                            SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
+                            Date time1 = timeFormat.parse(a1.getTime());
+                            Date time2 = timeFormat.parse(a2.getTime());
+                            return time1.compareTo(time2);
+                        } catch (Exception e) {
+                            Log.e(TAG, "Error sorting appointments by time: " + e.getMessage());
+                            return 0;
+                        }
+                    });
 
                     if (appointments.isEmpty()) {
                         showEmptyState();
@@ -192,60 +161,9 @@ public class DailyScheduleFragment extends Fragment {
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Log.e(TAG, "Error loading appointments: " + e.getMessage(), e);
+                    Log.e(TAG, "Error loading appointments for selected date", e);
                     showEmptyState();
                 });
-    }
-    private void processAppointments(com.google.firebase.firestore.QuerySnapshot queryDocumentSnapshots, String displayDate) {
-        List<Appointment> appointments = new ArrayList<>();
-        Set<String> userIds = new HashSet<>();
-
-        for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-            String id = doc.getId();
-            String userId = doc.getString("userId");
-            String treatment = doc.getString("treatment");
-            String time = doc.getString("time");
-            Long isAvailableLong = doc.getLong("isAvailable");
-            int isAvailable = isAvailableLong != null ? isAvailableLong.intValue() : 1;
-
-            if (treatment != null && time != null && isAvailable == 1) {
-                appointments.add(new Appointment(id, userId, treatment, displayDate, time, isAvailable));
-
-                if (userId != null) {
-                    userIds.add(userId);
-                }
-            }
-        }
-
-        Log.d(TAG, "Need to fetch names for " + userIds.size() + " users");
-
-        if (appointments.isEmpty()) {
-            showEmptyState();
-        } else {
-            showAppointments(appointments);
-
-            fetchUserNames(userIds);
-        }
-    }
-
-    private void fetchUserNames(Set<String> userIds) {
-        for (String userId : userIds) {
-            db.collection("users").document(userId)
-                    .get()
-                    .addOnSuccessListener(doc -> {
-                        if (doc.exists()) {
-                            String name = doc.getString("name");
-                            if (name != null && !name.isEmpty()) {
-                                Log.d(TAG, "Found name for user " + userId + ": " + name);
-                                // Update the adapter with this user's name
-                                adapter.updateUserName(userId, name);
-                            }
-                        }
-                    })
-                    .addOnFailureListener(e -> {
-                        Log.e(TAG, "Error fetching user name for " + userId, e);
-                    });
-        }
     }
 
     private void showEmptyState() {

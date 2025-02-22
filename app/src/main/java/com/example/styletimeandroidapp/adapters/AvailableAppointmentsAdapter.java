@@ -13,30 +13,20 @@ import com.example.styletimeandroidapp.R;
 
 import java.util.List;
 
-/**
- * Adapter for displaying available appointment time slots.
- */
 public class AvailableAppointmentsAdapter extends RecyclerView.Adapter<AvailableAppointmentsAdapter.ViewHolder> {
 
     private List<String> appointments;
+    private List<String> bookedTimes;
     private OnItemClickListener listener;
     private int selectedPosition = RecyclerView.NO_POSITION;
 
-    /**
-     * Interface to handle time slot selection.
-     */
     public interface OnItemClickListener {
         void onItemClick(String appointmentTime);
     }
 
-    /**
-     * Constructor for AvailableAppointmentsAdapter.
-     *
-     * @param appointments List of available time slots.
-     * @param listener     Listener for handling selection.
-     */
-    public AvailableAppointmentsAdapter(List<String> appointments, OnItemClickListener listener) {
+    public AvailableAppointmentsAdapter(List<String> appointments, List<String> bookedTimes, OnItemClickListener listener) {
         this.appointments = appointments;
+        this.bookedTimes = bookedTimes;
         this.listener = listener;
     }
 
@@ -48,23 +38,25 @@ public class AvailableAppointmentsAdapter extends RecyclerView.Adapter<Available
         return new ViewHolder(view);
     }
 
-    /**
-     * Binds time slots to RecyclerView and manages selection highlighting.
-     */
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         String time = appointments.get(position);
 
         holder.timeText.setText(time);
 
-        holder.itemView.setBackgroundColor(selectedPosition == position ? Color.LTGRAY : Color.TRANSPARENT);
+        if (bookedTimes.contains(time)) {
+            holder.itemView.setBackgroundColor(Color.RED);
+            holder.itemView.setEnabled(false);
+        } else {
+            holder.itemView.setBackgroundColor(selectedPosition == position ? Color.LTGRAY : Color.TRANSPARENT);
 
-        holder.itemView.setOnClickListener(v -> {
-            notifyItemChanged(selectedPosition);
-            selectedPosition = holder.getAdapterPosition();
-            notifyItemChanged(selectedPosition);
-            listener.onItemClick(time);
-        });
+            holder.itemView.setOnClickListener(v -> {
+                notifyItemChanged(selectedPosition);
+                selectedPosition = holder.getAdapterPosition();
+                notifyItemChanged(selectedPosition);
+                listener.onItemClick(time);
+            });
+        }
     }
 
     @Override
@@ -72,9 +64,6 @@ public class AvailableAppointmentsAdapter extends RecyclerView.Adapter<Available
         return appointments.size();
     }
 
-    /**
-     * ViewHolder for available time slots.
-     */
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView timeText;
 

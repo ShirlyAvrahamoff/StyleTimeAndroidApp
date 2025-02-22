@@ -22,6 +22,7 @@ import com.example.styletimeandroidapp.adapters.AppointmentsAdapter;
 import com.example.styletimeandroidapp.models.Appointment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -86,7 +87,7 @@ public class ClientHomeFragment extends Fragment {
     }
 
     private void listenToAppointments() {
-        FirebaseUser currentUser = auth.getCurrentUser();
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
             Toast.makeText(getActivity(), "User not logged in", Toast.LENGTH_SHORT).show();
             return;
@@ -94,40 +95,34 @@ public class ClientHomeFragment extends Fragment {
 
         db.collection("appointments")
                 .whereEqualTo("userId", currentUser.getUid())
-                .whereEqualTo("isAvailable", 1)
-                .addSnapshotListener((snapshots, e) -> {
-                    if (e != null) {
-                        Log.w("Firestore", "Listen failed.", e);
-                        return;
-                    }
-
+                .whereEqualTo("isAvailable", 0) // תורים שנקבעו ללקוח
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
                     appointmentList.clear();
-                    for (QueryDocumentSnapshot doc : snapshots) {
+                    for (DocumentSnapshot doc : querySnapshot) {
                         Appointment appointment = doc.toObject(Appointment.class);
                         appointmentList.add(appointment);
                     }
 
+                    // מיון לפי תאריך
                     Collections.sort(appointmentList, (a1, a2) -> {
-                        try {
-                            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
-                            Date date1 = sdf.parse(a1.getDate() + " " + a1.getTime());
-                            Date date2 = sdf.parse(a2.getDate() + " " + a2.getTime());
-                            return date1.compareTo(date2);
-                        } catch (ParseException ex) {
-                            Log.e("SortingError", "Error while sorting appointments", ex);
+                        if (a1.getParsedDate() != null && a2.getParsedDate() != null) {
+                            return a1.getParsedDate().compareTo(a2.getParsedDate());
+                        } else {
                             return 0;
                         }
                     });
+
                     adapter.notifyDataSetChanged();
 
-
                     if (appointmentList.isEmpty()) {
-                        noAppointmentsMessage.setVisibility(View.VISIBLE);
-                    } else {
-                        noAppointmentsMessage.setVisibility(View.GONE);
+                        Toast.makeText(getActivity(), "No upcoming appointments.", Toast.LENGTH_SHORT).show();
                     }
-                });
+                })
+                .addOnFailureListener(e -> Log.e("Firestore", "Error fetching appointments", e));
     }
+
+
 
     private String formatDateWithDay(String originalDate) {
         try {

@@ -90,7 +90,7 @@ public class DailyScheduleAdapter extends RecyclerView.Adapter<DailyScheduleAdap
 
     private String formatDate(String rawDate) {
         try {
-            SimpleDateFormat inputFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH); // Match display format
+            SimpleDateFormat inputFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
             SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
             return outputFormat.format(inputFormat.parse(rawDate));
         } catch (Exception e) {

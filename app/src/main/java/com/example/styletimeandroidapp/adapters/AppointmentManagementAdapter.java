@@ -55,48 +55,23 @@ public class AppointmentManagementAdapter extends RecyclerView.Adapter<Appointme
                     .setTitle("Delete Appointment")
                     .setMessage("Are you sure you want to delete this appointment?")
                     .setPositiveButton("Yes", (dialog, which) -> {
-                        Log.d("AppointmentManagement", "Delete button clicked for appointment ID: " + appointment.getId());
-
-                        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-                        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-                        db.collection("users").document(currentUserId)
-                                .get()
-                                .addOnSuccessListener(userDoc -> {
-                                    String role = userDoc.getString("role");
-                                    if ("admin".equals(role)) {
-                                        db.collection("appointments").document(appointment.getId())
-                                                .delete()
-                                                .addOnSuccessListener(aVoid -> {
-                                                    Log.d("AppointmentManagement", "Appointment successfully deleted");
-
-                                                    int adapterPosition = appointments.indexOf(appointment);
-                                                    if (adapterPosition != -1) {
-                                                        appointments.remove(adapterPosition);
-                                                        notifyItemRemoved(adapterPosition);
-                                                        notifyItemRangeChanged(adapterPosition, appointments.size() - adapterPosition);
-                                                    }
-
-                                                    Toast.makeText(v.getContext(), "Appointment deleted successfully", Toast.LENGTH_SHORT).show();
-                                                })
-                                                .addOnFailureListener(e -> {
-                                                    Log.e("AppointmentManagement", "Error deleting appointment", e);
-                                                    Toast.makeText(v.getContext(), "Failed to delete: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                                });
-                                    } else {
-                                        Toast.makeText(v.getContext(), "Only admins can delete appointments", Toast.LENGTH_SHORT).show();
-                                    }
+                        db.collection("appointments").document(appointment.getId())
+                                .delete()
+                                .addOnSuccessListener(aVoid -> {
+                                    appointments.remove(position);
+                                    notifyItemRemoved(position);
+                                    notifyItemRangeChanged(position, appointments.size());
+                                    Toast.makeText(v.getContext(), "Appointment deleted", Toast.LENGTH_SHORT).show();
                                 })
                                 .addOnFailureListener(e -> {
-                                    Log.e("AppointmentManagement", "Error checking admin status", e);
-                                    Toast.makeText(v.getContext(), "Error verifying permissions", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(v.getContext(), "Failed to delete appointment", Toast.LENGTH_SHORT).show();
                                 });
                     })
                     .setNegativeButton("No", null)
                     .show();
         });
     }
+
     @Override
     public int getItemCount() {
         return appointments.size();

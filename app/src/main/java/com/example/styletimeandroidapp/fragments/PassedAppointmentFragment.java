@@ -48,15 +48,12 @@ public class PassedAppointmentFragment extends Fragment {
     }
 
     private void loadPastAppointments() {
-        // Show loading state
         passedAppointmentsRecyclerView.setVisibility(View.GONE);
         emptyStateText.setVisibility(View.VISIBLE);
 
-        // Get current date and time
         Date currentDateTime = new Date();
         SimpleDateFormat dateTimeFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss 'GMT'Z yyyy HH:mm", Locale.ENGLISH);
 
-        // Get ALL appointments and filter locally for past appointments
         db.collection("appointments")
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
@@ -72,14 +69,13 @@ public class PassedAppointmentFragment extends Fragment {
                             String treatment = doc.getString("treatment");
                             String date = doc.getString("date");
                             String time = doc.getString("time");
-                            String clientName = doc.getString("clientName"); // May be null
+                            String clientName = doc.getString("clientName");
 
                             Appointment appointment = new Appointment(id, userId, treatment, date, time, isAvailable);
                             if (clientName != null) {
                                 appointment.setClientName(clientName);
                             }
 
-                            // Combine date and time for comparison
                             String appointmentDateTime = date + " " + time;
                             try {
                                 Date appointmentDate = dateTimeFormat.parse(appointmentDateTime);
@@ -92,9 +88,6 @@ public class PassedAppointmentFragment extends Fragment {
                         }
                     }
 
-                    Log.d(TAG, "Loaded " + pastAppointments.size() + " past appointments");
-
-                    // Sort past appointments in descending order (most recent past first)
                     pastAppointments.sort((a1, a2) -> {
                         try {
                             String datetime1 = a1.getDate() + " " + a1.getTime();

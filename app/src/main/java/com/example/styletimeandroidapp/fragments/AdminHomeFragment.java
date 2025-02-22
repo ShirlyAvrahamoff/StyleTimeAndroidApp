@@ -23,7 +23,7 @@ public class AdminHomeFragment extends Fragment {
 
     private TextView welcomeText;
     private Button dailyScheduleButton;
-    private Button appointmentManagementButton;
+    private Button viewAllAppointmentsButton;
     private FirebaseAuth auth;
     private FirebaseFirestore db;
 
@@ -33,51 +33,45 @@ public class AdminHomeFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_admin_home, container, false);
 
+        // Initialize Firebase
         auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        // אתחול הרכיבים
-        welcomeText = view.findViewById(R.id.welcomeText);
+        // Initialize UI components
+        welcomeText = view.findViewById(R.id.helloAdminText);
         dailyScheduleButton = view.findViewById(R.id.dailyScheduleButton);
-        appointmentManagementButton = view.findViewById(R.id.appointmentManagementButton);
+        viewAllAppointmentsButton = view.findViewById(R.id.viewAllAppointmentsButton);
 
-        // בדיקה שהרכיבים אותחלו בהצלחה
-        if (welcomeText == null) {
-            Log.e(TAG, "ERROR: welcomeText is NULL! Check fragment_admin_home.xml");
+        // Check for null UI elements
+        if (welcomeText == null || dailyScheduleButton == null || viewAllAppointmentsButton == null) {
+            Log.e(TAG, "UI components are missing");
+            Toast.makeText(getContext(), "UI Initialization Error", Toast.LENGTH_SHORT).show();
+            return view;
         }
 
-        // הגדרת מאזיני לחיצה לכפתורים
+        // Setup Button Listeners
         setupButtons();
 
-        // טעינת פרטי המנהל
+        // Load Admin Details
         loadAdminDetails();
 
         return view;
     }
 
     private void setupButtons() {
-        if (dailyScheduleButton != null) {
-            dailyScheduleButton.setOnClickListener(v -> {
-                // ניווט למסך לוז יומי
-                Navigation.findNavController(v).navigate(R.id.action_adminHomeFragment_to_dailyScheduleFragment);
-            });
-        } else {
-            Log.e(TAG, "ERROR: dailyScheduleButton is NULL!");
-        }
+        dailyScheduleButton.setOnClickListener(v -> {
+            Navigation.findNavController(v).navigate(R.id.action_adminHomeFragment_to_dailyScheduleFragment);
+        });
 
-        if (appointmentManagementButton != null) {
-            appointmentManagementButton.setOnClickListener(v -> {
-                // ניווט למסך ניהול תורים
-                Navigation.findNavController(v).navigate(R.id.action_adminHomeFragment_to_appointmentManagementFragment);
-            });
-        } else {
-            Log.e(TAG, "ERROR: appointmentManagementButton is NULL!");
-        }
+        viewAllAppointmentsButton.setOnClickListener(v -> {
+            Navigation.findNavController(v).navigate(R.id.action_adminHomeFragment_to_appointmentManagementFragment);
+        });
     }
 
     private void loadAdminDetails() {
         if (auth.getCurrentUser() == null) {
             Log.e(TAG, "ERROR: User is not logged in!");
+            Toast.makeText(getContext(), "User not logged in", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -86,30 +80,19 @@ public class AdminHomeFragment extends Fragment {
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
                         String name = documentSnapshot.getString("name");
-
                         if (name != null && !name.isEmpty()) {
-                            if (welcomeText != null) {
-                                welcomeText.setText("Hello, " + name);
-                            } else {
-                                Log.e(TAG, "ERROR: welcomeText is NULL, cannot set text.");
-                            }
+                            welcomeText.setText("Hello, " + name + "!");
                         } else {
-                            Log.e(TAG, "ERROR: 'name' field is missing in Firestore.");
+                            welcomeText.setText("Hello, Admin!");
                         }
                     } else {
-                        Log.e(TAG, "ERROR: User document does not exist in Firestore.");
+                        Log.e(TAG, "User document does not exist.");
+                        Toast.makeText(getContext(), "User data not found.", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Log.e(TAG, "ERROR: Failed to load admin data.", e);
-                    Toast.makeText(getActivity(), "Failed to load user data.", Toast.LENGTH_SHORT).show();
-                });
-
-        db.collection("users").document(auth.getCurrentUser().getUid())
-                .get()
-                .addOnSuccessListener(doc -> {
-                    String role = doc.getString("role");
-                    Log.d("RoleCheck", "Current user role: " + role);
+                    Log.e(TAG, "Failed to load user data", e);
+                    Toast.makeText(getContext(), "Failed to load user data.", Toast.LENGTH_SHORT).show();
                 });
     }
 }

@@ -53,7 +53,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:mcv_showOtherDates="all"
-                app:mcv_selectionColor="@color/blue"
+                android:theme="@style/CalendarPinkSelector"
                 android:layout_marginBottom="16dp"/>
 
             <!-- Available Times Title -->
@@ -84,7 +84,7 @@
                 android:layout_height="wrap_content"
                 android:text="Confirm Appointment"
                 android:textColor="@android:color/white"
-                android:backgroundTint="@color/blue"
+                android:backgroundTint="@color/accent"
                 android:padding="12dp"
                 android:visibility="gone"/>
         </LinearLayout>

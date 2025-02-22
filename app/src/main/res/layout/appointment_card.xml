@@ -65,7 +65,10 @@
                 android:layout_height="wrap_content"
                 android:text="Cancel"
                 android:textColor="@android:color/white"
-                android:backgroundTint="@color/red"/>
+                android:backgroundTint="@color/red"
+                android:minWidth="100dp"
+                android:padding="8dp"/>
+
         </LinearLayout>
 
     </LinearLayout>

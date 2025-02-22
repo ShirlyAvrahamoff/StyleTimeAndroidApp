@@ -5,63 +5,77 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="4dp">
+    app:cardCornerRadius="12dp"
+    app:cardElevation="6dp"
+    android:backgroundTint="@android:color/white">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="16dp">
+        android:padding="16dp"
+        android:gravity="center_vertical">
 
-        <!-- זמן התור -->
+        <!-- Appointment Time -->
         <TextView
             android:id="@+id/appointmentTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="14:30"
             android:textSize="18sp"
             android:textStyle="bold"
+            android:textColor="@color/primary_color"
             android:layout_marginEnd="16dp"/>
 
+        <!-- Appointment Details -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical">
 
-            <!-- שם הלקוח -->
+            <!-- Client Name -->
             <TextView
                 android:id="@+id/clientName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="Client Name"
                 android:textSize="16sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                android:textColor="@color/black"/>
 
-            <!-- סוג הטיפול -->
+            <!-- Treatment Type -->
             <TextView
                 android:id="@+id/treatmentType"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="Treatment"
                 android:textSize="14sp"
+                android:textColor="@color/gray_dark"
                 android:layout_marginTop="4dp"/>
 
-            <!-- כפתור ביטול -->
+            <!-- Cancel Button -->
             <Button
                 android:id="@+id/cancelButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Cancel"
                 android:layout_marginTop="8dp"
+                android:textColor="@color/primary_color"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
         </LinearLayout>
 
-        <!-- סטטוס התור -->
+        <!-- Appointment Status -->
         <TextView
             android:id="@+id/appointmentStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="Cancelled"
+            android:textSize="14sp"
             android:textColor="@android:color/holo_red_dark"
-            android:visibility="gone"/>
+            android:visibility="gone"
+            android:layout_gravity="center_vertical"/>
+
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>

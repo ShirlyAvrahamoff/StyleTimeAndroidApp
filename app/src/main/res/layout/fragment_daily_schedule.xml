@@ -1,45 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@android:color/white"
     android:padding="16dp">
 
+    <!-- Title -->
     <TextView
         android:id="@+id/dateTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:text="Selected Date" />
+        android:text="Select a Date"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="@color/primary_color"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="12dp"/>
 
+    <!-- Calendar View with Pink Selector -->
     <CalendarView
         android:id="@+id/calendarView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/dateTitle" />
+        android:layout_marginBottom="16dp"
+        android:theme="@style/CalendarPinkSelector"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/dailyScheduleRecyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/calendarView" />
-
+    <!-- Empty State Text (Visible if No Appointments) -->
     <TextView
         android:id="@+id/emptyStateText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/calendarView"
         android:text="No appointments for this date"
+        android:textColor="@android:color/darker_gray"
+        android:textStyle="italic"
+        android:textSize="16sp"
         android:visibility="gone"
-        android:layout_centerHorizontal="true" />
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp"/>
 
+    <!-- RecyclerView for Appointments -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/dailyScheduleRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:visibility="gone"/>
+
+    <!-- Floating Action Button for Booking -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabBook"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="16dp"
-        app:srcCompat="@android:drawable/ic_input_add" />
+        android:layout_gravity="end"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="8dp"
+        app:srcCompat="@android:drawable/ic_input_add"
+        app:backgroundTint="@color/purple_500"
+        app:tint="@android:color/white"/>
 
-</RelativeLayout>
+</LinearLayout>

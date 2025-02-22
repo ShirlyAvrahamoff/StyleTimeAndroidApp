@@ -238,8 +238,8 @@ public class BookAppointmentFragment extends Fragment {
             return;
         }
 
-        // Format the selected date to DD/MM/YYYY
-        String formattedDate = formatDate(calendarView.getSelectedDate().getDate().toString());
+        // Format date to "dd/MM/yyyy"
+        String formattedDate = formatDateToDisplay(calendarView.getSelectedDate().getDate().toString());
 
         new AlertDialog.Builder(getContext())
                 .setTitle("Confirm Appointment")
@@ -248,7 +248,20 @@ public class BookAppointmentFragment extends Fragment {
                 .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
                 .show();
     }
-    // Date Formatter Method (DD/MM/YYYY)
+
+    private String formatDateToDisplay(String rawDate) {
+        try {
+            SimpleDateFormat inputFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss 'GMT'Z yyyy", Locale.ENGLISH);
+            SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+            Date date = inputFormat.parse(rawDate);
+            return outputFormat.format(date);
+        } catch (ParseException e) {
+            Log.e("DateFormatError", "Error formatting date", e);
+            return rawDate;
+        }
+    }
+
+
     private String formatDate(String rawDate) {
         try {
             SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);

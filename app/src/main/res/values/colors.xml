@@ -4,21 +4,28 @@
     <color name="primary_light">#F8BBD0</color> <!-- Light Pink -->
     <color name="primary_dark">#C2185B</color> <!-- Dark Pink -->
     <color name="primary">#E91E63</color> <!-- Main Pink -->
-    <color name="accent">#FF4081</color>
-    <color name="pink">#FF69B4</color>
+    <color name="accent">#FF4081</color> <!-- Vibrant Pink Accent -->
+    <color name="pink">#FF69B4</color> <!-- Hot Pink -->
 
     <!-- Neutral Colors -->
-    <color name="white">#FFFFFF</color>
-    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color> <!-- Backgrounds & Cards -->
+    <color name="black">#000000</color> <!-- Primary Text -->
     <color name="gray_light">#F5F5F5</color> <!-- Background Gray -->
     <color name="gray_medium">#BDBDBD</color> <!-- Borders and Dividers -->
     <color name="gray_dark">#616161</color> <!-- Secondary Text -->
 
     <!-- Accent Colors -->
+    <color name="purple_500">#9C27B0</color>
+    <color name="teal_700">#018786</color>
     <color name="accent_color">#9C27B0</color> <!-- Subtle Purple Accent -->
     <color name="red">#D32F2F</color> <!-- For Cancel/Delete Actions -->
     <color name="blue">#2196F3</color> <!-- Calendar & Highlights -->
+    <color name="green">#4CAF50</color> <!-- Success Messages -->
+    <color name="yellow">#FFEB3B</color> <!-- Warnings & Highlights -->
 
     <!-- Transparent -->
     <color name="transparent">#00000000</color>
+
+    <!-- Shadow & Elevation -->
+    <color name="shadow_color">#33000000</color> <!-- Light shadow for cards -->
 </resources>

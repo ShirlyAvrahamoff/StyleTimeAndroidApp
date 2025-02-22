@@ -5,6 +5,7 @@
     android:orientation="vertical"
     android:padding="16dp">
 
+    <!-- Empty State -->
     <TextView
         android:id="@+id/emptyStateText"
         android:layout_width="match_parent"
@@ -13,6 +14,7 @@
         android:textAlignment="center"
         android:visibility="visible" />
 
+    <!-- RecyclerView for Current Appointments -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/appointmentsRecyclerView"
         android:layout_width="match_parent"
@@ -20,12 +22,12 @@
         android:layout_weight="1"
         android:visibility="gone" />
 
-    <!-- New Button for Navigating to Passed Appointments -->
+    <!-- Button to Navigate to Past Appointments -->
     <Button
         android:id="@+id/btnViewPassedAppointments"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/primary_light"
         android:text="View Passed Appointments"
         android:layout_marginTop="16dp" />
-
 </LinearLayout>

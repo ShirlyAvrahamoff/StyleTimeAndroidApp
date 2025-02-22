@@ -88,11 +88,15 @@ public class LoginFragment extends Fragment {
     private void checkUserRole(String userId) {
         db.collection("users").document(userId).get()
                 .addOnSuccessListener(documentSnapshot -> {
-                    Boolean isAdmin = documentSnapshot.getBoolean("isAdmin");
-                    if (isAdmin != null && isAdmin) {
-                        navController.navigate(R.id.action_loginFragment_to_adminHomeFragment);  // Admin Home
+                    if (documentSnapshot.exists()) {
+                        String role = documentSnapshot.getString("role");
+                        if ("admin".equals(role)) {
+                            navController.navigate(R.id.action_loginFragment_to_adminHomeFragment);
+                        } else {
+                            navController.navigate(R.id.action_loginFragment_to_clientHomeFragment);
+                        }
                     } else {
-                        navController.navigate(R.id.action_loginFragment_to_clientHomeFragment);  // Client Home
+                        showErrorDialog("Error", "User not found.");
                     }
                 })
                 .addOnFailureListener(e -> {
@@ -100,6 +104,7 @@ public class LoginFragment extends Fragment {
                     showErrorDialog("Error", "Unable to retrieve user information.");
                 });
     }
+
 
     /**
      * Displays an error dialog.

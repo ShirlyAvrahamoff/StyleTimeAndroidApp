@@ -10,6 +10,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.example.styletimeandroidapp.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.BuildConfig;
 
 public class MainActivity extends AppCompatActivity {
     private FirebaseAuth auth;
@@ -30,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        // Get NavController from NavHostFragment
+        // Get NavController from NavHostFragment safely
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = fragmentManager.findFragmentById(R.id.nav_host_fragment);
 
@@ -38,6 +39,12 @@ public class MainActivity extends AppCompatActivity {
             navController = ((NavHostFragment) fragment).getNavController();
         } else {
             throw new IllegalStateException("NavHostFragment not found!");
+        }
+
+        // Use Firebase Emulator if in Debug mode
+        if (BuildConfig.DEBUG) {  // פועל רק בזמן פיתוח
+            FirebaseAuth.getInstance().useEmulator("10.0.2.2", 9099);
+            FirebaseFirestore.getInstance().useEmulator("10.0.2.2", 8080);
         }
     }
 }

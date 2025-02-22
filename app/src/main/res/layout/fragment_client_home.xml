@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     android:background="@drawable/background">
 
-    <!-- Full Card Background for Content -->
     <androidx.cardview.widget.CardView
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -19,94 +18,82 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_margin="16dp">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="24dp">
+            android:padding="20dp">
 
-            <!-- Greeting Text -->
             <TextView
                 android:id="@+id/helloText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Hello User!"
-                android:textSize="22sp"
+                android:textSize="24sp"
                 android:textStyle="bold"
                 android:textColor="@color/black"
-                android:gravity="center"
-                android:layout_gravity="center_horizontal"
-                android:paddingBottom="16dp" />
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="40dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
 
-            <!-- Upcoming Appointments Title -->
             <TextView
                 android:id="@+id/upcomingAppointmentsTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
                 android:text="Upcoming Appointments"
+                android:textColor="@color/black"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:textColor="@color/black"
-                android:layout_marginBottom="8dp" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/helloText" />
 
-            <!-- No Appointments Message (Hidden by Default) -->
             <TextView
                 android:id="@+id/noAppointmentsMessage"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="You have no upcoming appointments."
                 android:textColor="@color/gray_dark"
                 android:textSize="16sp"
                 android:gravity="center"
-                android:padding="16dp"
-                android:background="@android:color/darker_gray"
+                android:padding="12dp"
+                android:background="@drawable/rounded_gray_bg"
                 android:visibility="gone"
-                android:layout_marginBottom="8dp" />
+                android:layout_marginBottom="8dp"
+                app:layout_constraintTop_toBottomOf="@id/upcomingAppointmentsTitle"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
 
-            <!-- RecyclerView for Appointments -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewAppointments"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_weight="1"
-                android:layout_marginBottom="8dp" />
+                android:layout_marginBottom="8dp"
+                app:layout_constraintTop_toBottomOf="@id/upcomingAppointmentsTitle"
+                app:layout_constraintBottom_toTopOf="@id/bookAppointmentButton"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
 
-            <!-- No Appointments Card -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/noAppointmentsCard"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp"
-                android:backgroundTint="#EEEEEE"
-                android:visibility="gone">
-
-                <TextView
-                    android:id="@+id/noAppointmentsMessage"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="No Upcoming Appointments"
-                    android:textColor="@color/gray_dark"
-                    android:textSize="18sp"
-                    android:gravity="center"
-                    android:padding="20dp"
-                    android:background="@android:color/darker_gray"
-                    android:layout_marginTop="12dp"
-                    android:visibility="gone"/>
-
-            </androidx.cardview.widget.CardView>
-
-            <!-- Book Appointment Button -->
             <Button
                 android:id="@+id/bookAppointmentButton"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="BOOK AN APPOINTMENT"
                 android:backgroundTint="@color/pink"
                 android:textColor="@android:color/white"
                 android:textStyle="bold"
-                android:layout_marginTop="16dp" />
-        </LinearLayout>
+                android:textSize="18sp"
+                android:padding="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
     </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

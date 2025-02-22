@@ -6,64 +6,82 @@
     android:layout_margin="8dp"
     app:cardCornerRadius="16dp"
     app:cardElevation="8dp"
-    android:backgroundTint="@android:color/white">
+    android:backgroundTint="@color/gray_medium">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Treatment Name -->
-        <TextView
-            android:id="@+id/treatmentText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Treatment Name"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@color/primary_color"
-            android:shadowColor="#55000000"
-            android:shadowDx="2"
-            android:shadowDy="2"
-            android:shadowRadius="4" />
-
-        <!-- Client Name -->
-        <TextView
-            android:id="@+id/clientNameText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Client Name"
-            android:textSize="16sp"
-            android:textColor="@color/gray_dark"
-            android:layout_marginTop="4dp"/>
-
-        <!-- Date and Time -->
+        <!-- Linear Layout for Texts -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="8dp">
+            android:orientation="vertical"
+            android:layout_toStartOf="@id/checkmarkIcon"
+            android:layout_alignParentStart="true"
+            android:layout_marginEnd="16dp">
 
+            <!-- Treatment Name -->
             <TextView
-                android:id="@+id/dateText"
-                android:layout_width="0dp"
+                android:id="@+id/treatmentText"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Date"
-                android:textSize="14sp"
-                android:textColor="@color/gray_dark"/>
+                android:text="Treatment Name"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/primary_color"
+                android:shadowColor="#55000000"
+                android:shadowDx="2"
+                android:shadowDy="2"
+                android:shadowRadius="4" />
 
+            <!-- Client Name -->
             <TextView
-                android:id="@+id/timeText"
-                android:layout_width="0dp"
+                android:id="@+id/clientNameText"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="end"
-                android:text="Time"
-                android:textSize="14sp"
-                android:textColor="@color/gray_dark"/>
+                android:text="Client Name"
+                android:textSize="16sp"
+                android:textColor="@color/white"
+                android:layout_marginTop="4dp"/>
+
+            <!-- Date and Time -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp">
+
+                <TextView
+                    android:id="@+id/dateText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Date"
+                    android:textSize="14sp"
+                    android:textColor="@color/white"
+                    android:layout_marginEnd="16dp"/>
+
+                <TextView
+                    android:id="@+id/timeText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Time"
+                    android:textSize="14sp"
+                    android:textColor="@color/white"/>
+            </LinearLayout>
         </LinearLayout>
 
-    </LinearLayout>
+        <!-- Checkmark Icon (Resized and Aligned) -->
+        <ImageView
+            android:id="@+id/checkmarkIcon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_check_circle"
+            android:tint="@color/green"
+            android:contentDescription="Completed Appointment" />
+
+    </RelativeLayout>
 </androidx.cardview.widget.CardView>

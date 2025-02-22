@@ -5,8 +5,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.styletimeandroidapp.R;
@@ -26,6 +28,7 @@ public class PassedAppointmentFragment extends Fragment {
     private TextView emptyStateText;
     private PassedAppointmentAdapter adapter;
     private FirebaseFirestore db;
+    private Button backToAppointmentsButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -34,9 +37,15 @@ public class PassedAppointmentFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
         passedAppointmentsRecyclerView = view.findViewById(R.id.passedAppointmentsRecyclerView);
         emptyStateText = view.findViewById(R.id.emptyStateText);
+        backToAppointmentsButton = view.findViewById(R.id.backToAppointmentsButton); // Connect to the button
 
         setupRecyclerView();
         loadPastAppointments();
+
+        // Set up the navigation for the back button
+        backToAppointmentsButton.setOnClickListener(v ->
+                Navigation.findNavController(v).navigate(R.id.action_passedAppointmentFragment_to_appointmentManagementFragment)
+        );
 
         return view;
     }
@@ -52,7 +61,7 @@ public class PassedAppointmentFragment extends Fragment {
         emptyStateText.setVisibility(View.VISIBLE);
 
         Date currentDateTime = new Date();
-        SimpleDateFormat dateTimeFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss 'GMT'Z yyyy HH:mm", Locale.ENGLISH);
+        SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ENGLISH);
 
         db.collection("appointments")
                 .get()
@@ -63,7 +72,7 @@ public class PassedAppointmentFragment extends Fragment {
                         Long isAvailableLong = doc.getLong("isAvailable");
                         int isAvailable = isAvailableLong != null ? isAvailableLong.intValue() : 0;
 
-                        if (isAvailable == 1) {
+                        if (isAvailable == 0) {
                             String id = doc.getId();
                             String userId = doc.getString("userId");
                             String treatment = doc.getString("treatment");

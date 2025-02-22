@@ -82,7 +82,6 @@ public class ClientHomeFragment extends Fragment {
                 new OnBackPressedCallback(true) {
                     @Override
                     public void handleOnBackPressed() {
-                        // Do nothing to block back press
                     }
                 });
 
@@ -111,16 +110,21 @@ public class ClientHomeFragment extends Fragment {
 
         db.collection("appointments")
                 .whereEqualTo("userId", currentUser.getUid())
-                .whereEqualTo("isAvailable", 0) // תורים שנקבעו ללקוח
+                .whereEqualTo("isAvailable", 0)
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     appointmentList.clear();
+                    Date now = new Date();
+
                     for (DocumentSnapshot doc : querySnapshot) {
                         Appointment appointment = doc.toObject(Appointment.class);
-                        appointmentList.add(appointment);
+                        if (appointment != null && appointment.getParsedDate() != null) {
+                            if (appointment.getParsedDate().after(now)) {
+                                appointmentList.add(appointment);
+                            }
+                        }
                     }
 
-                    // מיון לפי תאריך
                     Collections.sort(appointmentList, (a1, a2) -> {
                         if (a1.getParsedDate() != null && a2.getParsedDate() != null) {
                             return a1.getParsedDate().compareTo(a2.getParsedDate());
@@ -132,11 +136,16 @@ public class ClientHomeFragment extends Fragment {
                     adapter.notifyDataSetChanged();
 
                     if (appointmentList.isEmpty()) {
-                        Toast.makeText(getActivity(), "No upcoming appointments.", Toast.LENGTH_SHORT).show();
+                        noAppointmentsMessage.setVisibility(View.VISIBLE);
+                        recyclerViewAppointments.setVisibility(View.GONE);
+                    } else {
+                        noAppointmentsMessage.setVisibility(View.GONE);
+                        recyclerViewAppointments.setVisibility(View.VISIBLE);
                     }
                 })
                 .addOnFailureListener(e -> Log.e("Firestore", "Error fetching appointments", e));
     }
+
 
 
 

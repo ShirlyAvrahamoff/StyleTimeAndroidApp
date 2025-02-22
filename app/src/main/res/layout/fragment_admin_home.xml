@@ -59,6 +59,16 @@
                 android:textColor="@android:color/white"
                 android:textStyle="bold" />
 
+            <Button
+                android:id="@+id/logoutButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="LOGOUT"
+                android:backgroundTint="@android:color/darker_gray"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                android:layout_marginTop="16dp" />
+
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 

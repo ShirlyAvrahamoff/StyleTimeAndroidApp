@@ -85,10 +85,8 @@ public class RegisterFragment extends Fragment {
                 .addOnSuccessListener(aVoid -> {
                     Log.d("RegisterFragment", "User registered successfully!");
 
-                    // Sign out the user after registration
                     mAuth.signOut();
 
-                    // Show success dialog
                     showSuccessDialog();
                 })
                 .addOnFailureListener(e -> {

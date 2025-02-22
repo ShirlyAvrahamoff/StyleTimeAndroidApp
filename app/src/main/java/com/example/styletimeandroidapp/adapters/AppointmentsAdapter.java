@@ -59,17 +59,13 @@ public class AppointmentsAdapter extends RecyclerView.Adapter<AppointmentsAdapte
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Appointment appointment = appointmentList.get(position);
 
-        // Display the treatment name
         holder.treatmentText.setText(appointment.getTreatment());
 
-        // Format and display the date (DD/MM/YYYY)
         String formattedDate = formatDate(appointment.getDate());
         holder.dateText.setText("Date: " + formattedDate);
 
-        // Display the time directly
         holder.timeText.setText("Time: " + appointment.getTime());
 
-        // Cancel button functionality
         holder.cancelButton.setOnClickListener(v -> {
             if (cancelListener != null) {
                 cancelListener.onCancel(appointment);
@@ -106,13 +102,12 @@ public class AppointmentsAdapter extends RecyclerView.Adapter<AppointmentsAdapte
      */
     private String formatDate(String rawDate) {
         try {
-            // Example Firestore date: "Mon Feb 24 00:00:00 GMT+02:00 2025"
             SimpleDateFormat inputFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss 'GMT'Z yyyy", Locale.ENGLISH);
             SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
             return outputFormat.format(inputFormat.parse(rawDate));
         } catch (ParseException e) {
             Log.e("AppointmentsAdapter", "Error formatting date: " + e.getMessage());
-            return rawDate; // Fallback if parsing fails
+            return rawDate;
         }
     }
 }

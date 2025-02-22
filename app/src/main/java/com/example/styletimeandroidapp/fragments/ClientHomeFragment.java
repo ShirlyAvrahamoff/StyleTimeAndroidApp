@@ -107,7 +107,6 @@ public class ClientHomeFragment extends Fragment {
                         appointmentList.add(appointment);
                     }
 
-                    // ✅ Sort appointments by Date and Time
                     Collections.sort(appointmentList, (a1, a2) -> {
                         try {
                             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());

@@ -47,7 +47,6 @@ public class AppointmentManagementAdapter extends RecyclerView.Adapter<Appointme
                     holder.clientNameText.setText(clientName != null ? clientName : "Unknown");
                 })
                 .addOnFailureListener(e -> {
-                    // Show userId if permission denied
                     holder.clientNameText.setText("Client ID: " + appointment.getUserId().substring(0, 6) + "...");
                 });
 
@@ -58,10 +57,8 @@ public class AppointmentManagementAdapter extends RecyclerView.Adapter<Appointme
                     .setPositiveButton("Yes", (dialog, which) -> {
                         Log.d("AppointmentManagement", "Delete button clicked for appointment ID: " + appointment.getId());
 
-                        // Get a reference to the Firestore database
                         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-                        // First, get the current user to verify admin status
                         String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
                         db.collection("users").document(currentUserId)
@@ -69,7 +66,6 @@ public class AppointmentManagementAdapter extends RecyclerView.Adapter<Appointme
                                 .addOnSuccessListener(userDoc -> {
                                     String role = userDoc.getString("role");
                                     if ("admin".equals(role)) {
-                                        // User is admin, proceed with deletion
                                         db.collection("appointments").document(appointment.getId())
                                                 .delete()
                                                 .addOnSuccessListener(aVoid -> {
@@ -89,7 +85,6 @@ public class AppointmentManagementAdapter extends RecyclerView.Adapter<Appointme
                                                     Toast.makeText(v.getContext(), "Failed to delete: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                                                 });
                                     } else {
-                                        // Not admin
                                         Toast.makeText(v.getContext(), "Only admins can delete appointments", Toast.LENGTH_SHORT).show();
                                     }
                                 })
@@ -114,14 +109,12 @@ public class AppointmentManagementAdapter extends RecyclerView.Adapter<Appointme
 
     private String formatDate(String rawDate) {
         try {
-            // Parse the input format from Firestore (e.g., "Mon Feb 24 00:00:00 GMT+02:00 2025")
             SimpleDateFormat inputFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss 'GMT'Z yyyy", Locale.ENGLISH);
-            // Output format as requested (e.g., "24/02/2025")
             SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
             return outputFormat.format(inputFormat.parse(rawDate));
         } catch (Exception e) {
             Log.e("AppointmentManagementAdapter", "Error formatting date: " + e.getMessage());
-            return rawDate; // Fallback to raw date if parsing fails
+            return rawDate;
         }
     }
 

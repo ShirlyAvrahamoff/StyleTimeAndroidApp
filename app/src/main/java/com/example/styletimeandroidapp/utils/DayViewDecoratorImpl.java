@@ -29,6 +29,6 @@ public class DayViewDecoratorImpl implements DayViewDecorator {
 
     @Override
     public void decorate(DayViewFacade view) {
-        view.addSpan(new ForegroundColorSpan(color)); // Changes text color
+        view.addSpan(new ForegroundColorSpan(color));
     }
 }

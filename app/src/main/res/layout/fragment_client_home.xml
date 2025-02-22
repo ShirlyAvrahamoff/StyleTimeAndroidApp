@@ -71,7 +71,7 @@
                 android:layout_weight="1"
                 android:layout_marginBottom="8dp" />
 
-            <!-- No Appointments Card (Optional) -->
+            <!-- No Appointments Card -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/noAppointmentsCard"
                 android:layout_width="match_parent"

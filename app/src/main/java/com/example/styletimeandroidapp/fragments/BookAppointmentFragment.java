@@ -61,7 +61,6 @@ public class BookAppointmentFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_book_appointment, container, false);
 
-        // Initialize Firestore and UI elements
         db = FirebaseFirestore.getInstance();
         calendarView = view.findViewById(R.id.calendarView);
         availableAppointmentsRecyclerView = view.findViewById(R.id.availableAppointmentsRecyclerView);
@@ -73,13 +72,11 @@ public class BookAppointmentFragment extends Fragment {
         availableAppointments = new ArrayList<>();
         treatments = new ArrayList<>();
 
-        // Set up Treatment Spinner
         List<String> treatmentNames = new ArrayList<>();
         treatmentNames.add("Select Treatment...");
         treatmentAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_dropdown_item, treatmentNames);
         treatmentSpinner.setAdapter(treatmentAdapter);
 
-        // Set up Appointments Adapter
         appointmentAdapter = new AvailableAppointmentsAdapter(availableAppointments, appointment -> {
             selectedAppointment = appointment;
             confirmAppointmentButton.setVisibility(View.VISIBLE);
@@ -89,10 +86,8 @@ public class BookAppointmentFragment extends Fragment {
         setupCalendar();
         loadTreatments();
 
-        // Confirm Appointment Button
         confirmAppointmentButton.setOnClickListener(v -> confirmAppointment());
 
-        // Treatment Selection Listener
         treatmentSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -175,7 +170,7 @@ public class BookAppointmentFragment extends Fragment {
         Calendar calendar = date.getCalendar();
         int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
 
-        // ✅ Saturday: Show "Closed" Message
+        //Saturday: Show "Closed" Message
         if (dayOfWeek == Calendar.SATURDAY) {
             availableTimesTitle.setText("Closed on Saturdays");
             availableTimesTitle.setVisibility(View.VISIBLE);
@@ -183,14 +178,13 @@ public class BookAppointmentFragment extends Fragment {
             confirmAppointmentButton.setVisibility(View.GONE);
             return;
         } else {
-            // ✅ Reset Message When Selecting Other Days
             availableTimesTitle.setText("Select an Available Time:");
             availableTimesTitle.setVisibility(View.VISIBLE);
             availableAppointmentsRecyclerView.setVisibility(View.VISIBLE);
-            confirmAppointmentButton.setVisibility(View.GONE); // Hide until a slot is selected
+            confirmAppointmentButton.setVisibility(View.GONE);
         }
 
-        // ✅ Friday: Different Hours
+        // Friday: Different Hours
         int startHour = (dayOfWeek == Calendar.FRIDAY) ? 8 : 10;
         int endHour = (dayOfWeek == Calendar.FRIDAY) ? 15 : 22;
 
@@ -238,7 +232,6 @@ public class BookAppointmentFragment extends Fragment {
             return;
         }
 
-        // Format date to "dd/MM/yyyy"
         String formattedDate = formatDateToDisplay(calendarView.getSelectedDate().getDate().toString());
 
         new AlertDialog.Builder(getContext())
@@ -262,35 +255,6 @@ public class BookAppointmentFragment extends Fragment {
     }
 
 
-    private String formatDate(String rawDate) {
-        try {
-            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-            SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
-            Date date = inputFormat.parse(rawDate);
-            return outputFormat.format(date);
-        } catch (ParseException e) {
-            Log.e("DateFormatError", "Error formatting date", e);
-            return rawDate; // Fallback to raw date
-        }
-    }
-
-
-    /**
-     * Formats date to include the day of the week in DD/MM/YYYY format.
-     */
-    private String formatDateWithDay(String originalDate) {
-        try {
-            SimpleDateFormat originalFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-            SimpleDateFormat desiredFormat = new SimpleDateFormat("EEEE, dd/MM/yyyy", Locale.getDefault());
-
-            Date date = originalFormat.parse(originalDate);
-            return desiredFormat.format(date); // Example: "Tuesday, 20/02/2025"
-        } catch (ParseException e) {
-            Log.e("DateFormatError", "Error formatting date", e);
-            return originalDate;
-        }
-    }
-
     private String formatDateToFirestore(String originalDate) {
         try {
             SimpleDateFormat originalFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
@@ -302,7 +266,6 @@ public class BookAppointmentFragment extends Fragment {
             return originalDate;
         }
     }
-
 
     /**
      * Saves the confirmed appointment to Firestore.
@@ -317,7 +280,6 @@ public class BookAppointmentFragment extends Fragment {
         String userId = user.getUid();
         String appointmentId = db.collection("appointments").document().getId();
 
-        // Format date before saving
         String formattedDate = formatDateToFirestore(calendarView.getSelectedDate().getDate().toString());
 
         db.collection("appointments").document(appointmentId)
@@ -327,7 +289,7 @@ public class BookAppointmentFragment extends Fragment {
                         selectedTreatment.getName(),
                         formattedDate,
                         selectedAppointment,
-                        1 // 1 means the appointment is booked
+                        1
                 ))
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(getContext(), "Appointment booked successfully!", Toast.LENGTH_SHORT).show();

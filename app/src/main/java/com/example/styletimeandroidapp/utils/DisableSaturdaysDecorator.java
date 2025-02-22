@@ -22,6 +22,6 @@ public class DisableSaturdaysDecorator implements DayViewDecorator {
 
     @Override
     public void decorate(DayViewFacade view) {
-        view.addSpan(new ForegroundColorSpan(Color.GRAY)); // Make Saturdays gray
+        view.addSpan(new ForegroundColorSpan(Color.GRAY));
     }
 }

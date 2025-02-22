@@ -5,22 +5,18 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-/**
- * Appointment model representing an appointment in the system.
- */
+
 public class Appointment {
     private String id;
     private String userId;
-    private String clientName; // Used for manager view
+    private String clientName;
     private String treatment;
-    private String date; // Stored as dd/MM/yyyy
+    private String date;
     private String time;
     private int isAvailable;
-    private Date parsedDate; // Used for chronological sorting
+    private Date parsedDate;
 
-    /**
-     * Default constructor required for Firestore deserialization.
-     */
+
     public Appointment() {}
 
     /**
@@ -66,7 +62,7 @@ public class Appointment {
     }
 
     /**
-     * Constructor with parsed date (for advanced sorting).
+     * Constructor with parsed date (for sorting).
      *
      * @param id          Appointment ID.
      * @param userId      User ID who booked the appointment.
@@ -103,40 +99,30 @@ public class Appointment {
         }
     }
 
-    // =======================
     // Getters
-    // =======================
-
     public String getId() { return id; }
     public String getUserId() { return userId; }
-    public String getClientName() { return clientName; } // For manager use
+    public String getClientName() { return clientName; }
     public String getTreatment() { return treatment; }
     public String getDate() { return date; }
     public String getTime() { return time; }
     public int getIsAvailable() { return isAvailable; }
     public Date getParsedDate() { return parsedDate; }
 
-    // =======================
-    // Setters
-    // =======================
 
+    // Setters
     public void setId(String id) { this.id = id; }
     public void setUserId(String userId) { this.userId = userId; }
     public void setClientName(String clientName) { this.clientName = clientName; }
     public void setTreatment(String treatment) { this.treatment = treatment; }
     public void setIsAvailable(int isAvailable) { this.isAvailable = isAvailable; }
 
-    /**
-     * Sets the date and updates the parsed date.
-     */
+
     public void setDate(String date) {
         this.date = date;
         this.parsedDate = parseDate(this.date, this.time);
     }
 
-    /**
-     * Sets the time and updates the parsed date.
-     */
     public void setTime(String time) {
         this.time = time;
         this.parsedDate = parseDate(this.date, this.time);

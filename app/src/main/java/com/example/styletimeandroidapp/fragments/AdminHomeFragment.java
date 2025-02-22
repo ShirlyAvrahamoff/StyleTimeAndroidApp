@@ -33,26 +33,21 @@ public class AdminHomeFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_admin_home, container, false);
 
-        // Initialize Firebase
         auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        // Initialize UI components
         welcomeText = view.findViewById(R.id.helloAdminText);
         dailyScheduleButton = view.findViewById(R.id.dailyScheduleButton);
         viewAllAppointmentsButton = view.findViewById(R.id.viewAllAppointmentsButton);
 
-        // Check for null UI elements
         if (welcomeText == null || dailyScheduleButton == null || viewAllAppointmentsButton == null) {
             Log.e(TAG, "UI components are missing");
             Toast.makeText(getContext(), "UI Initialization Error", Toast.LENGTH_SHORT).show();
             return view;
         }
 
-        // Setup Button Listeners
         setupButtons();
 
-        // Load Admin Details
         loadAdminDetails();
 
         return view;

@@ -22,7 +22,6 @@
         android:layout_weight="1"
         android:visibility="gone" />
 
-    <!-- Button to Navigate to Past Appointments -->
     <Button
         android:id="@+id/btnViewPassedAppointments"
         android:layout_width="match_parent"

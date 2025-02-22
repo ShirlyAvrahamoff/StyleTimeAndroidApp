@@ -38,7 +38,6 @@ public class AppointmentManagementFragment extends Fragment {
         appointmentsRecyclerView = view.findViewById(R.id.appointmentsRecyclerView);
         emptyStateText = view.findViewById(R.id.emptyStateText);
 
-        // Set up the button for navigation
         Button btnViewPassedAppointments = view.findViewById(R.id.btnViewPassedAppointments);
         btnViewPassedAppointments.setOnClickListener(v -> {
             Navigation.findNavController(v).navigate(R.id.action_appointmentManagementFragment_to_passedAppointmentFragment);
@@ -57,16 +56,12 @@ public class AppointmentManagementFragment extends Fragment {
     }
 
     private void loadCurrentAndFutureAppointments() {
-        // ... (keep the existing method unchanged)
-        // Show loading state
         appointmentsRecyclerView.setVisibility(View.GONE);
         emptyStateText.setVisibility(View.VISIBLE);
 
-        // Get current date and time
         Date currentDateTime = new Date();
         SimpleDateFormat dateTimeFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss 'GMT'Z yyyy HH:mm", Locale.ENGLISH);
 
-        // Get ALL appointments and filter locally for current and future appointments
         db.collection("appointments")
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
@@ -82,14 +77,13 @@ public class AppointmentManagementFragment extends Fragment {
                             String treatment = doc.getString("treatment");
                             String date = doc.getString("date");
                             String time = doc.getString("time");
-                            String clientName = doc.getString("clientName"); // May be null
+                            String clientName = doc.getString("clientName");
 
                             Appointment appointment = new Appointment(id, userId, treatment, date, time, isAvailable);
                             if (clientName != null) {
                                 appointment.setClientName(clientName);
                             }
 
-                            // Combine date and time for comparison
                             String appointmentDateTime = date + " " + time;
                             try {
                                 Date appointmentDate = dateTimeFormat.parse(appointmentDateTime);
@@ -104,7 +98,6 @@ public class AppointmentManagementFragment extends Fragment {
 
                     Log.d(TAG, "Loaded " + appointments.size() + " current/future appointments");
 
-                    // Sort appointments in ascending order (oldest first)
                     appointments.sort((a1, a2) -> {
                         try {
                             String datetime1 = a1.getDate() + " " + a1.getTime();
@@ -112,8 +105,7 @@ public class AppointmentManagementFragment extends Fragment {
                             return dateTimeFormat.parse(datetime1).compareTo(dateTimeFormat.parse(datetime2));
                         } catch (Exception e) {
                             Log.e(TAG, "Error sorting appointments: " + e.getMessage());
-                            return 0; // Default to no change if parsing fails
-                        }
+                            return 0;                         }
                     });
 
                     if (appointments.isEmpty()) {

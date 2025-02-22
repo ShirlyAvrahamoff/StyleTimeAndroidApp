@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class AvailableAppointmentsAdapter extends RecyclerView.Adapter<AvailableAppointmentsAdapter.ViewHolder> {
 
-    private List<String> appointments; // List of time slots
+    private List<String> appointments;
     private OnItemClickListener listener;
     private int selectedPosition = RecyclerView.NO_POSITION;
 
@@ -55,18 +55,15 @@ public class AvailableAppointmentsAdapter extends RecyclerView.Adapter<Available
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         String time = appointments.get(position);
 
-        // Display the time
         holder.timeText.setText(time);
 
-        // Highlight selected time slot
         holder.itemView.setBackgroundColor(selectedPosition == position ? Color.LTGRAY : Color.TRANSPARENT);
 
-        // Click listener for time slot selection
         holder.itemView.setOnClickListener(v -> {
             notifyItemChanged(selectedPosition);
             selectedPosition = holder.getAdapterPosition();
             notifyItemChanged(selectedPosition);
-            listener.onItemClick(time); // Pass selected time to listener
+            listener.onItemClick(time);
         });
     }
 

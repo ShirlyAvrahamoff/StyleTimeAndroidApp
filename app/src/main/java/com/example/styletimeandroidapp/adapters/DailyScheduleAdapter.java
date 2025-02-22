@@ -51,13 +51,11 @@ public class DailyScheduleAdapter extends RecyclerView.Adapter<DailyScheduleAdap
         holder.timeText.setText(appointment.getTime());
 
         if (isManager) {
-            // Initially show a loading or user ID indicator
             String shortUserId = appointment.getUserId().substring(0,
                     Math.min(6, appointment.getUserId().length())) + "...";
             holder.clientNameText.setText("Loading client info...");
             holder.clientNameText.setVisibility(View.VISIBLE);
 
-            // Fetch client name from Firestore using userId
             FirebaseFirestore.getInstance().collection("users")
                     .document(appointment.getUserId())
                     .get()

@@ -58,7 +58,7 @@ public class DailyScheduleFragment extends Fragment {
         setupCalendarView();
         setupRecyclerView();
 
-        loadAppointmentsForDate(new Date()); // Load today’s appointments
+        loadAppointmentsForDate(new Date());
         return view;
     }
 
@@ -80,25 +80,23 @@ public class DailyScheduleFragment extends Fragment {
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
                         String role = documentSnapshot.getString("role");
-                        // Treat both "manager" and "admin" as managers
                         isManager = "manager".equals(role) || "admin".equals(role);
                         Log.d(TAG, "User role: " + role + ", isManager: " + isManager);
-                        setupRecyclerView(); // Re-setup adapter with correct role
-                        setupFab(); // Show/hide FAB based on role
-                        loadAppointmentsForDate(new Date()); // Reload with role applied
+                        setupRecyclerView();
+                        setupFab();
+                        loadAppointmentsForDate(new Date());
                     } else {
                         Log.e(TAG, "User document not found");
                     }
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Error checking role: " + e.getMessage(), e);
-                    showEmptyState(); // Fallback if role check fails
+                    showEmptyState();
                 });
     }
 
     private void setupCalendarView() {
         calendarView.setOnDateChangeListener((view, year, month, dayOfMonth) -> {
-            // Create calendar with the exact selected date (don't use GMT conversion here)
             Calendar calendar = Calendar.getInstance();
             calendar.set(year, month, dayOfMonth);
             calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -109,35 +107,31 @@ public class DailyScheduleFragment extends Fragment {
             Date selectedDate = calendar.getTime();
             Log.d(TAG, "Selected date from calendar UI: " + selectedDate);
 
-            // Pass the EXACT user-selected date to loadAppointmentsForDate
             loadAppointmentsForDate(selectedDate);
         });
     }
 
     private void setupRecyclerView() {
-        adapter = new DailyScheduleAdapter(isManager); // Pass role to adapter
+        adapter = new DailyScheduleAdapter(isManager);
         dailyScheduleRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         dailyScheduleRecyclerView.setAdapter(adapter);
     }
 
     private void setupFab() {
         if (isManager) {
-            fabBook.setVisibility(View.GONE); // Hide for managers
+            fabBook.setVisibility(View.GONE);
         } else {
             fabBook.setVisibility(View.VISIBLE);
             fabBook.setOnClickListener(v -> {
                 Toast.makeText(getContext(), "Booking feature TBD", Toast.LENGTH_SHORT).show();
-                // TODO: Navigate to booking fragment/activity (e.g., BookAppointmentFragment)
             });
         }
     }
 
     private void loadAppointmentsForDate(Date date) {
-        // Format for display
         String displayDate = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH).format(date);
         dateTitle.setText("Selected Date: " + displayDate);
 
-        // Create calendar at start of day
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -145,20 +139,16 @@ public class DailyScheduleFragment extends Fragment {
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
 
-        // Create all possible date format strings that might be in Firestore
         List<String> possibleDateFormats = new ArrayList<>();
 
-        // GMT format
         SimpleDateFormat sdfGmt = new SimpleDateFormat("EEE MMM dd HH:mm:ss 'GMT+00:00' yyyy", Locale.ENGLISH);
         sdfGmt.setTimeZone(TimeZone.getTimeZone("GMT"));
         possibleDateFormats.add(sdfGmt.format(calendar.getTime()));
 
-        // GMT+02:00 formats (both with 00:00 and 02:00 hour)
         SimpleDateFormat sdfGmt2 = new SimpleDateFormat("EEE MMM dd HH:mm:ss 'GMT+02:00' yyyy", Locale.ENGLISH);
         sdfGmt2.setTimeZone(TimeZone.getTimeZone("GMT+02:00"));
         possibleDateFormats.add(sdfGmt2.format(calendar.getTime()));
 
-        // Try another format with GMT+02:00 at 00:00
         Calendar calGmt2 = Calendar.getInstance(TimeZone.getTimeZone("GMT+02:00"));
         calGmt2.setTime(date);
         calGmt2.set(Calendar.HOUR_OF_DAY, 0);
@@ -167,10 +157,8 @@ public class DailyScheduleFragment extends Fragment {
         calGmt2.set(Calendar.MILLISECOND, 0);
         possibleDateFormats.add(sdfGmt2.format(calGmt2.getTime()));
 
-        // Log all possible date formats we're looking for
         Log.d(TAG, "Querying for dates: " + possibleDateFormats);
 
-        // Get ALL appointments and filter locally
         db.collection("appointments")
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
@@ -179,12 +167,11 @@ public class DailyScheduleFragment extends Fragment {
                     for (DocumentSnapshot doc : querySnapshot) {
                         String docDate = doc.getString("date");
 
-                        // Check if the appointment date matches any of our possible formats
                         if (docDate != null && possibleDateFormats.contains(docDate)) {
                             Long isAvailableLong = doc.getLong("isAvailable");
                             int isAvailable = isAvailableLong != null ? isAvailableLong.intValue() : 0;
 
-                            if (isAvailable == 1) { // Only include booked appointments
+                            if (isAvailable == 1) {
                                 String id = doc.getId();
                                 String userId = doc.getString("userId");
                                 String time = doc.getString("time");
@@ -209,13 +196,11 @@ public class DailyScheduleFragment extends Fragment {
                     showEmptyState();
                 });
     }
-    // In DailyScheduleFragment, after loading appointments
     private void processAppointments(com.google.firebase.firestore.QuerySnapshot queryDocumentSnapshots, String displayDate) {
         List<Appointment> appointments = new ArrayList<>();
         Set<String> userIds = new HashSet<>();
 
         for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-            // Create appointments as before
             String id = doc.getId();
             String userId = doc.getString("userId");
             String treatment = doc.getString("treatment");
@@ -226,29 +211,24 @@ public class DailyScheduleFragment extends Fragment {
             if (treatment != null && time != null && isAvailable == 1) {
                 appointments.add(new Appointment(id, userId, treatment, displayDate, time, isAvailable));
 
-                // Collect unique user IDs
                 if (userId != null) {
                     userIds.add(userId);
                 }
             }
         }
 
-        // Log the user IDs we need to fetch
         Log.d(TAG, "Need to fetch names for " + userIds.size() + " users");
 
         if (appointments.isEmpty()) {
             showEmptyState();
         } else {
-            // Show appointments with user IDs initially
             showAppointments(appointments);
 
-            // Then try to batch-fetch user data
             fetchUserNames(userIds);
         }
     }
 
     private void fetchUserNames(Set<String> userIds) {
-        // For each user ID, fetch the user document
         for (String userId : userIds) {
             db.collection("users").document(userId)
                     .get()

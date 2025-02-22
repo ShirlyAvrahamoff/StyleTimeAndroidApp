@@ -22,16 +22,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Remove ActionBar if exists
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
 
-        // Initialize Firebase
         auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        // Get NavController from NavHostFragment safely
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = fragmentManager.findFragmentById(R.id.nav_host_fragment);
 
@@ -41,8 +38,7 @@ public class MainActivity extends AppCompatActivity {
             throw new IllegalStateException("NavHostFragment not found!");
         }
 
-        // Use Firebase Emulator if in Debug mode
-        if (BuildConfig.DEBUG) {  // פועל רק בזמן פיתוח
+        if (BuildConfig.DEBUG) {
             FirebaseAuth.getInstance().useEmulator("10.0.2.2", 9099);
             FirebaseFirestore.getInstance().useEmulator("10.0.2.2", 8080);
         }

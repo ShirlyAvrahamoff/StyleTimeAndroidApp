@@ -42,39 +42,32 @@ public class LoginFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        // Initialize EditText fields
         emailEditText = view.findViewById(R.id.emailEditText);
         passwordEditText = view.findViewById(R.id.passwordEditText);
 
-        // Login Button Listener
         view.findViewById(R.id.login_button).setOnClickListener(v -> {
             String email = emailEditText.getText().toString().trim();
             String password = passwordEditText.getText().toString().trim();
 
-            // Validate Input Fields
             if (email.isEmpty() || password.isEmpty()) {
                 Toast.makeText(getContext(), "Please enter both email and password", Toast.LENGTH_SHORT).show();
             } else {
-                loginUser(email, password);  // ✅ Pass the required arguments
+                loginUser(email, password);
             }
         });
 
-        // Navigate to Register Fragment
         view.findViewById(R.id.go_to_register).setOnClickListener(v ->
                 navController.navigate(R.id.registerFragment)
         );
     }
 
-    /**
-     * Logs in the user using Firebase Authentication.
-     */
     private void loginUser(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         FirebaseUser user = mAuth.getCurrentUser();
                         if (user != null) {
-                            checkUserRole(user.getUid());  // ✅ Check if user is admin or client
+                            checkUserRole(user.getUid());
                         }
                     } else {
                         Toast.makeText(getContext(), "Login failed. Please try again.", Toast.LENGTH_SHORT).show();
@@ -82,9 +75,6 @@ public class LoginFragment extends Fragment {
                 });
     }
 
-    /**
-     * Checks if the logged-in user is an admin or a client.
-     */
     private void checkUserRole(String userId) {
         db.collection("users").document(userId).get()
                 .addOnSuccessListener(documentSnapshot -> {
@@ -106,9 +96,6 @@ public class LoginFragment extends Fragment {
     }
 
 
-    /**
-     * Displays an error dialog.
-     */
     private void showErrorDialog(String title, String message) {
         new AlertDialog.Builder(requireContext())
                 .setTitle(title)

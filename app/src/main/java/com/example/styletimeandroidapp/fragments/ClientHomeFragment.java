@@ -56,7 +56,6 @@ public class ClientHomeFragment extends Fragment {
 
         recyclerViewAppointments = view.findViewById(R.id.recyclerViewAppointments);
         helloText = view.findViewById(R.id.helloText);
-        noAppointmentsCard = view.findViewById(R.id.noAppointmentsCard);
         noAppointmentsMessage = view.findViewById(R.id.noAppointmentsMessage);
 
         recyclerViewAppointments.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -114,17 +113,18 @@ public class ClientHomeFragment extends Fragment {
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     appointmentList.clear();
-                    Date now = new Date();
+                    Date now = new Date(); // התאריך והשעה הנוכחיים
 
                     for (DocumentSnapshot doc : querySnapshot) {
                         Appointment appointment = doc.toObject(Appointment.class);
-                        if (appointment != null && appointment.getParsedDate() != null) {
-                            if (appointment.getParsedDate().after(now)) {
-                                appointmentList.add(appointment);
-                            }
+
+                        // סינון רק לתורים עתידיים
+                        if (appointment != null && appointment.getParsedDate() != null && appointment.getParsedDate().after(now)) {
+                            appointmentList.add(appointment);
                         }
                     }
 
+                    // מיון התורים לפי תאריך מהקרוב לרחוק
                     Collections.sort(appointmentList, (a1, a2) -> {
                         if (a1.getParsedDate() != null && a2.getParsedDate() != null) {
                             return a1.getParsedDate().compareTo(a2.getParsedDate());
@@ -135,6 +135,7 @@ public class ClientHomeFragment extends Fragment {
 
                     adapter.notifyDataSetChanged();
 
+                    // הצגת הודעה אם אין תורים עתידיים
                     if (appointmentList.isEmpty()) {
                         noAppointmentsMessage.setVisibility(View.VISIBLE);
                         recyclerViewAppointments.setVisibility(View.GONE);
@@ -145,23 +146,6 @@ public class ClientHomeFragment extends Fragment {
                 })
                 .addOnFailureListener(e -> Log.e("Firestore", "Error fetching appointments", e));
     }
-
-
-
-
-    private String formatDateWithDay(String originalDate) {
-        try {
-            SimpleDateFormat originalFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-            SimpleDateFormat desiredFormat = new SimpleDateFormat("EEEE, dd/MM/yyyy", Locale.getDefault());
-
-            Date date = originalFormat.parse(originalDate);
-            return desiredFormat.format(date); // Example: "Tuesday, 20/02/2025"
-        } catch (ParseException e) {
-            Log.e("DateFormatError", "Error formatting date", e);
-            return originalDate;
-        }
-    }
-
     private void showDeleteConfirmationDialog(Appointment appointment) {
         new AlertDialog.Builder(getContext())
                 .setTitle("Cancel Appointment")

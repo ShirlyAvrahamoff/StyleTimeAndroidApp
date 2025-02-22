@@ -1,81 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
     app:cardCornerRadius="12dp"
-    app:cardElevation="6dp"
+    app:cardElevation="4dp"
     android:backgroundTint="@android:color/white">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="16dp"
+        android:padding="12dp"
         android:gravity="center_vertical">
 
-        <!-- Appointment Time -->
+        <!-- Time on the left -->
         <TextView
-            android:id="@+id/appointmentTime"
+            android:id="@+id/timeText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="14:30"
-            android:textSize="18sp"
+            android:text="11:00"
             android:textStyle="bold"
-            android:textColor="@color/primary_color"
-            android:layout_marginEnd="16dp"/>
+            android:textSize="18sp"
+            android:textColor="@color/pink"
+            android:layout_marginEnd="16dp"
+            android:gravity="center"/>
 
-        <!-- Appointment Details -->
+        <!-- Treatment and Client Name in vertical layout -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical">
 
-            <!-- Client Name -->
+            <!-- Treatment Name -->
             <TextView
-                android:id="@+id/clientName"
+                android:id="@+id/treatmentText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Client Name"
+                android:text="Hair Straightening"
                 android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="@color/black"/>
+                android:textColor="@android:color/black"
+                android:textStyle="bold"/>
 
-            <!-- Treatment Type -->
+            <!-- Client Name below -->
             <TextView
-                android:id="@+id/treatmentType"
+                android:id="@+id/clientNameText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Treatment"
+                android:text="Client:"
                 android:textSize="14sp"
-                android:textColor="@color/gray_dark"
-                android:layout_marginTop="4dp"/>
-
-            <!-- Cancel Button -->
-            <Button
-                android:id="@+id/cancelButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Cancel"
-                android:layout_marginTop="8dp"
-                android:textColor="@color/primary_color"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+                android:textColor="@android:color/darker_gray"/>
         </LinearLayout>
 
-        <!-- Appointment Status -->
-        <TextView
-            android:id="@+id/appointmentStatus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Cancelled"
-            android:textSize="14sp"
-            android:textColor="@android:color/holo_red_dark"
-            android:visibility="gone"
-            android:layout_gravity="center_vertical"/>
-
     </LinearLayout>
-
 </androidx.cardview.widget.CardView>

@@ -15,21 +15,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.styletimeandroidapp.R;
 import com.example.styletimeandroidapp.adapters.DailyScheduleAdapter;
 import com.example.styletimeandroidapp.models.Appointment;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
-import java.util.TimeZone;
 
 public class DailyScheduleFragment extends Fragment {
     private static final String TAG = "DailyScheduleFragment";
@@ -38,7 +32,6 @@ public class DailyScheduleFragment extends Fragment {
     private RecyclerView dailyScheduleRecyclerView;
     private TextView dateTitle;
     private TextView emptyStateText;
-    private FloatingActionButton fabBook;
     private DailyScheduleAdapter adapter;
     private FirebaseFirestore db;
     private FirebaseAuth auth;
@@ -57,8 +50,7 @@ public class DailyScheduleFragment extends Fragment {
         checkUserRole();
         setupCalendarView();
         setupRecyclerView();
-
-        loadAppointmentsForDate(new Date()); // טען את התאריך הנוכחי כשנכנסים
+        loadAppointmentsForDate(new Date());
 
         return view;
     }
@@ -68,7 +60,6 @@ public class DailyScheduleFragment extends Fragment {
         dailyScheduleRecyclerView = view.findViewById(R.id.dailyScheduleRecyclerView);
         dateTitle = view.findViewById(R.id.dateTitle);
         emptyStateText = view.findViewById(R.id.emptyStateText);
-        fabBook = view.findViewById(R.id.fabBook);
     }
 
     private void checkUserRole() {
@@ -83,7 +74,6 @@ public class DailyScheduleFragment extends Fragment {
                         String role = documentSnapshot.getString("role");
                         isManager = "manager".equals(role) || "admin".equals(role);
                         setupRecyclerView();
-                        setupFab();
                         loadAppointmentsForDate(new Date());
                     } else {
                         Log.e(TAG, "User document not found");
@@ -105,15 +95,6 @@ public class DailyScheduleFragment extends Fragment {
         adapter = new DailyScheduleAdapter(isManager);
         dailyScheduleRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         dailyScheduleRecyclerView.setAdapter(adapter);
-    }
-
-    private void setupFab() {
-        if (isManager) {
-            fabBook.setVisibility(View.GONE);
-        } else {
-            fabBook.setVisibility(View.VISIBLE);
-            fabBook.setOnClickListener(v -> Toast.makeText(getContext(), "Booking feature TBD", Toast.LENGTH_SHORT).show());
-        }
     }
 
     private void loadAppointmentsForDate(Date selectedDate) {
@@ -141,7 +122,6 @@ public class DailyScheduleFragment extends Fragment {
                         }
                     }
 
-                    // ✅ מיון התורים לפי השעה
                     appointments.sort((a1, a2) -> {
                         try {
                             SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.ENGLISH);

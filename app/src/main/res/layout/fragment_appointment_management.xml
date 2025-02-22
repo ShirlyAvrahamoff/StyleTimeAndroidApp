@@ -1,32 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:background="@drawable/background"
     android:padding="16dp">
 
-    <!-- Empty State -->
-    <TextView
-        android:id="@+id/emptyStateText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="No appointments found"
-        android:textAlignment="center"
-        android:visibility="visible" />
-
-    <!-- RecyclerView for Current Appointments -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/appointmentsRecyclerView"
-        android:layout_width="match_parent"
+    <!-- Main CardView for Styling -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:visibility="gone" />
+        app:cardCornerRadius="20dp"
+        app:cardElevation="10dp"
+        android:background="@android:color/white"
+        android:alpha="0.9"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="16dp">
 
-    <Button
-        android:id="@+id/btnViewPassedAppointments"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/primary_light"
-        android:text="View Passed Appointments"
-        android:layout_marginTop="16dp" />
-</LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <!-- Page Title -->
+            <TextView
+                android:id="@+id/futureAppointmentsTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Future Appointments"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:textColor="@color/primary_color"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="16dp"/>
+
+            <!-- Empty State -->
+            <TextView
+                android:id="@+id/emptyStateText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="No appointments found"
+                android:textAlignment="center"
+                android:textSize="16sp"
+                android:textColor="@android:color/darker_gray"
+                android:background="#EEEEEE"
+                android:padding="12dp"
+                android:visibility="visible"
+                android:layout_marginBottom="8dp"/>
+
+            <!-- RecyclerView for Current Appointments -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/appointmentsRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:visibility="gone"
+                android:layout_marginBottom="8dp"/>
+
+            <!-- View Passed Appointments Button -->
+            <Button
+                android:id="@+id/btnViewPassedAppointments"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="View Passed Appointments"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                android:backgroundTint="@color/pink"
+                android:layout_marginTop="16dp"/>
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

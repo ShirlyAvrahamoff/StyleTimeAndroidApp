@@ -41,6 +41,11 @@
         <action
             android:id="@+id/action_clientHomeFragment_to_bookAppointmentFragment"
             app:destination="@id/bookAppointmentFragment" />
+        <action
+            android:id="@+id/action_clientHomeFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <!-- 🏠 Admin Home Screen -->
@@ -55,6 +60,11 @@
         <action
             android:id="@+id/action_adminHomeFragment_to_appointmentManagementFragment"
             app:destination="@id/appointmentManagementFragment" />
+        <action
+            android:id="@+id/action_adminHomeFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <!-- 📅 Appointment Booking Screen -->
@@ -95,7 +105,7 @@
             app:destination="@id/passedAppointmentFragment" />
     </fragment>
 
-    <!-- ✅ Passed Appointments Screen (New Fragment) -->
+    <!-- ✅ Passed Appointments Screen -->
     <fragment
         android:id="@+id/passedAppointmentFragment"
         android:name="com.example.styletimeandroidapp.fragments.PassedAppointmentFragment"

@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.styletimeandroidapp.R;
 import com.example.styletimeandroidapp.adapters.AvailableAppointmentsAdapter;
+import com.example.styletimeandroidapp.adapters.TreatmentAdapter;
 import com.example.styletimeandroidapp.models.Treatment;
 import com.example.styletimeandroidapp.models.Appointment;
 import com.example.styletimeandroidapp.utils.DisableSaturdaysDecorator;
@@ -131,8 +132,10 @@ public class BookAppointmentFragment extends Fragment {
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     treatments.clear();
-                    List<String> treatmentNames = new ArrayList<>();
-                    treatmentNames.add("Select Treatment...");
+                    List<Treatment> treatmentList = new ArrayList<>();
+
+                    // הוספת ברירת מחדל כהודעה בלבד
+                    treatmentList.add(new Treatment("Select Treatment...", 0));
 
                     for (DocumentSnapshot doc : querySnapshot) {
                         String name = doc.getString("name");
@@ -141,15 +144,13 @@ public class BookAppointmentFragment extends Fragment {
                         if (name != null && durationLong != null) {
                             int duration = durationLong.intValue();
                             treatments.add(new Treatment(name, duration));
-                            treatmentNames.add(name);
-                        } else {
-                            Log.e("Firebase", "Missing or invalid fields in treatment document: " + doc.getId());
+                            treatmentList.add(new Treatment(name, duration));
                         }
                     }
 
-                    treatmentAdapter.clear();
-                    treatmentAdapter.addAll(treatmentNames);
-                    treatmentAdapter.notifyDataSetChanged();
+                    TreatmentAdapter adapter = new TreatmentAdapter(requireContext(), treatmentList);
+                    treatmentSpinner.setAdapter(adapter);
+                    treatmentSpinner.setSelection(0, false); // כדי שה-Hint לא ייבחר כברירת מחדל
                 })
                 .addOnFailureListener(e ->
                         Toast.makeText(getActivity(), "Failed to load treatments", Toast.LENGTH_SHORT).show()

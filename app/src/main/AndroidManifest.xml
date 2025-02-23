@@ -17,7 +17,6 @@
         android:theme="@style/Theme.StyleTimeAndroidApp"
         tools:targetApi="31">
 
-        <!-- ✅ Splash Activity as Launcher -->
         <activity
             android:name=".activities.SplashActivity"
             android:theme="@style/Theme.StyleTimeAndroidApp.Splash"
@@ -29,18 +28,15 @@
         </activity>
 
 
-        <!-- ✅ Main Activity -->
         <activity
             android:name=".activities.MainActivity"
             android:exported="true"/>
 
-        <!-- ✅ Firebase Auth Activity -->
         <activity
             android:name="com.google.firebase.auth.internal.GenericIdpActivity"
             tools:replace="android:exported"
             android:exported="true"/>
 
-        <!-- ✅ Google Play Services Meta -->
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version"/>

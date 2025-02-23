@@ -1,55 +1,56 @@
 package com.example.styletimeandroidapp.adapters;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.annotation.Nullable;
+
 import com.example.styletimeandroidapp.R;
 import com.example.styletimeandroidapp.models.Treatment;
+
 import java.util.List;
 
-public class TreatmentAdapter extends RecyclerView.Adapter<TreatmentAdapter.ViewHolder> {
+public class TreatmentAdapter extends ArrayAdapter<Treatment> {
 
+    private final Context context;
     private final List<Treatment> treatments;
-    private final OnItemClickListener listener;
 
-    public interface OnItemClickListener {
-        void onItemClick(Treatment treatment);
-    }
-
-    public TreatmentAdapter(List<Treatment> treatments, OnItemClickListener listener) {
+    public TreatmentAdapter(@NonNull Context context, List<Treatment> treatments) {
+        super(context, 0, treatments);
+        this.context = context;
         this.treatments = treatments;
-        this.listener = listener;
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_treatment, parent, false);
-        return new ViewHolder(view);
+    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+        return createView(position, convertView, parent); // תצוגה של הפריט שנבחר
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Treatment treatment = treatments.get(position);
-        holder.treatmentName.setText(treatment.getName());
-
-        holder.itemView.setOnClickListener(v -> listener.onItemClick(treatment));
+    public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+        return createView(position, convertView, parent); // תצוגת הפריטים ברשימה
     }
 
-    @Override
-    public int getItemCount() {
-        return treatments.size();
-    }
-
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView treatmentName;
-
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            treatmentName = itemView.findViewById(R.id.treatmentName);
+    private View createView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+        if (convertView == null) {
+            convertView = LayoutInflater.from(context).inflate(R.layout.item_treatment, parent, false);
         }
+
+        Treatment treatment = treatments.get(position);
+
+        TextView treatmentName = convertView.findViewById(R.id.treatmentName);
+        ImageView treatmentIcon = convertView.findViewById(R.id.treatmentIcon);
+
+        treatmentName.setText(treatment.getName());
+        treatmentIcon.setImageResource(R.drawable.ic_scissors);
+
+        return convertView;
     }
 }

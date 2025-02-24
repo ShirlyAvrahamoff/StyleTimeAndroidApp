@@ -13,7 +13,6 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
-        <!-- Linear Layout for Texts -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -22,7 +21,6 @@
             android:layout_alignParentStart="true"
             android:layout_marginEnd="16dp">
 
-            <!-- Treatment Name -->
             <TextView
                 android:id="@+id/treatmentText"
                 android:layout_width="wrap_content"
@@ -36,7 +34,6 @@
                 android:shadowDy="2"
                 android:shadowRadius="4" />
 
-            <!-- Client Name -->
             <TextView
                 android:id="@+id/clientNameText"
                 android:layout_width="wrap_content"
@@ -46,7 +43,6 @@
                 android:textColor="@color/white"
                 android:layout_marginTop="4dp"/>
 
-            <!-- Date and Time -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -72,7 +68,6 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Checkmark Icon (Resized and Aligned) -->
         <ImageView
             android:id="@+id/checkmarkIcon"
             android:layout_width="48dp"
@@ -80,8 +75,7 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:src="@drawable/ic_check_circle"
-            android:tint="@color/green"
-            android:contentDescription="Completed Appointment" />
+            app:tint="@color/green" />
 
     </RelativeLayout>
 </androidx.cardview.widget.CardView>

@@ -113,18 +113,16 @@ public class ClientHomeFragment extends Fragment {
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     appointmentList.clear();
-                    Date now = new Date(); // התאריך והשעה הנוכחיים
+                    Date now = new Date();
 
                     for (DocumentSnapshot doc : querySnapshot) {
                         Appointment appointment = doc.toObject(Appointment.class);
 
-                        // סינון רק לתורים עתידיים
                         if (appointment != null && appointment.getParsedDate() != null && appointment.getParsedDate().after(now)) {
                             appointmentList.add(appointment);
                         }
                     }
 
-                    // מיון התורים לפי תאריך מהקרוב לרחוק
                     Collections.sort(appointmentList, (a1, a2) -> {
                         if (a1.getParsedDate() != null && a2.getParsedDate() != null) {
                             return a1.getParsedDate().compareTo(a2.getParsedDate());
@@ -135,7 +133,6 @@ public class ClientHomeFragment extends Fragment {
 
                     adapter.notifyDataSetChanged();
 
-                    // הצגת הודעה אם אין תורים עתידיים
                     if (appointmentList.isEmpty()) {
                         noAppointmentsMessage.setVisibility(View.VISIBLE);
                         recyclerViewAppointments.setVisibility(View.GONE);

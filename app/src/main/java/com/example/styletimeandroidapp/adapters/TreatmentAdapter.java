@@ -30,12 +30,12 @@ public class TreatmentAdapter extends ArrayAdapter<Treatment> {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        return createView(position, convertView, parent); // תצוגה של הפריט שנבחר
+        return createView(position, convertView, parent);
     }
 
     @Override
     public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        return createView(position, convertView, parent); // תצוגת הפריטים ברשימה
+        return createView(position, convertView, parent);
     }
 
     private View createView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {

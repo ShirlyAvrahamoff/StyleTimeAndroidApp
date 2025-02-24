@@ -6,7 +6,7 @@
     android:background="@drawable/background"
     android:padding="16dp">
 
-    <!-- Main CardView for Styling -->
+    <!-- Main CardView -->
     <androidx.cardview.widget.CardView
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -36,9 +36,63 @@
                 android:textStyle="bold"
                 android:textColor="@color/primary_color"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="16dp"/>
+                android:layout_marginBottom="16dp" />
 
-            <!-- Empty State -->
+            <!-- RadioGroup for Filter -->
+            <RadioGroup
+                android:id="@+id/radioGroupFilter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="8dp">
+
+                <RadioButton
+                    android:id="@+id/radioAll"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="All"
+                    android:checked="true"
+                    app:buttonTint="@color/pink" />
+
+                <RadioButton
+                    android:id="@+id/radioClient"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Client"
+                    android:layout_marginStart="16dp"
+                    app:buttonTint="@color/pink" />
+
+                <RadioButton
+                    android:id="@+id/radioTreatment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Treatment"
+                    android:layout_marginStart="16dp"
+                    app:buttonTint="@color/pink" />
+            </RadioGroup>
+
+            <!-- Spinner for Client -->
+            <Spinner
+                android:id="@+id/spinnerClient"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:visibility="gone"
+                android:background="@drawable/spinner_background"
+                android:padding="12dp"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Spinner for Treatment -->
+            <Spinner
+                android:id="@+id/spinnerTreatment"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:visibility="gone"
+                android:background="@drawable/spinner_background"
+                android:padding="12dp"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Empty State Text -->
             <TextView
                 android:id="@+id/emptyStateText"
                 android:layout_width="match_parent"
@@ -49,10 +103,10 @@
                 android:textColor="@android:color/darker_gray"
                 android:background="#EEEEEE"
                 android:padding="12dp"
-                android:visibility="visible"
-                android:layout_marginBottom="8dp"/>
+                android:visibility="gone"
+                android:layout_marginBottom="8dp" />
 
-            <!-- RecyclerView for Current Appointments -->
+            <!-- RecyclerView for Appointments -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/appointmentsRecyclerView"
                 android:layout_width="match_parent"
@@ -60,9 +114,9 @@
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
                 android:visibility="gone"
-                android:layout_marginBottom="8dp"/>
+                android:layout_marginBottom="8dp" />
 
-            <!-- View Passed Appointments Button -->
+            <!-- View Passed Appointments Button (Inside CardView) -->
             <Button
                 android:id="@+id/btnViewPassedAppointments"
                 android:layout_width="match_parent"
@@ -71,7 +125,7 @@
                 android:textColor="@android:color/white"
                 android:textStyle="bold"
                 android:backgroundTint="@color/pink"
-                android:layout_marginTop="16dp"/>
+                android:layout_marginTop="8dp" />
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>

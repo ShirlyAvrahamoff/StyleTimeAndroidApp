@@ -134,7 +134,6 @@ public class BookAppointmentFragment extends Fragment {
                     treatments.clear();
                     List<Treatment> treatmentList = new ArrayList<>();
 
-                    // הוספת ברירת מחדל כהודעה בלבד
                     treatmentList.add(new Treatment("Select Treatment...", 0));
 
                     for (DocumentSnapshot doc : querySnapshot) {
@@ -150,7 +149,7 @@ public class BookAppointmentFragment extends Fragment {
 
                     TreatmentAdapter adapter = new TreatmentAdapter(requireContext(), treatmentList);
                     treatmentSpinner.setAdapter(adapter);
-                    treatmentSpinner.setSelection(0, false); // כדי שה-Hint לא ייבחר כברירת מחדל
+                    treatmentSpinner.setSelection(0, false);
                 })
                 .addOnFailureListener(e ->
                         Toast.makeText(getActivity(), "Failed to load treatments", Toast.LENGTH_SHORT).show()
@@ -196,9 +195,20 @@ public class BookAppointmentFragment extends Fragment {
                     }
 
                     List<String> availableSlots = new ArrayList<>();
+                    Date now = new Date();
+
                     for (String timeSlot : allTimeSlots) {
-                        if (!bookedTimes.contains(timeSlot)) {
-                            availableSlots.add(timeSlot);
+                        String combinedDateTime = formatDateToFirestore(date.getDate().toString()) + " " + timeSlot;
+
+                        try {
+                            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+                            Date slotDate = sdf.parse(combinedDateTime);
+
+                            if (!bookedTimes.contains(timeSlot) && slotDate != null && slotDate.after(now)) {
+                                availableSlots.add(timeSlot);
+                            }
+                        } catch (ParseException e) {
+                            Log.e("DateParsingError", "Error parsing time slot", e);
                         }
                     }
 
@@ -219,6 +229,7 @@ public class BookAppointmentFragment extends Fragment {
                 );
     }
 
+
     private void confirmAppointment() {
         if (selectedTreatment == null) {
             Toast.makeText(getContext(), "Please select a treatment!", Toast.LENGTH_SHORT).show();
@@ -229,7 +240,6 @@ public class BookAppointmentFragment extends Fragment {
             return;
         }
 
-        // שימוש בפורמט יפה להצגה
         String formattedDate = formatDateToDisplay(calendarView.getSelectedDate().getDate());
 
         new AlertDialog.Builder(getContext())

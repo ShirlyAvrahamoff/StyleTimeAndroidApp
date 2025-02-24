@@ -37,12 +37,11 @@ public class PassedAppointmentFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
         passedAppointmentsRecyclerView = view.findViewById(R.id.passedAppointmentsRecyclerView);
         emptyStateText = view.findViewById(R.id.emptyStateText);
-        backToAppointmentsButton = view.findViewById(R.id.backToAppointmentsButton); // Connect to the button
+        backToAppointmentsButton = view.findViewById(R.id.backToAppointmentsButton);
 
         setupRecyclerView();
         loadPastAppointments();
 
-        // Set up the navigation for the back button
         backToAppointmentsButton.setOnClickListener(v ->
                 Navigation.findNavController(v).navigate(R.id.action_passedAppointmentFragment_to_appointmentManagementFragment)
         );

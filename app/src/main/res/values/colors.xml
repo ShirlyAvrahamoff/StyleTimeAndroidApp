@@ -7,6 +7,7 @@
     <color name="accent">#FF4081</color> <!-- Vibrant Pink Accent -->
     <color name="pink">#FF69B4</color> <!-- Hot Pink -->
 
+
     <!-- Neutral Colors -->
     <color name="white">#FFFFFF</color> <!-- Backgrounds & Cards -->
     <color name="black">#000000</color> <!-- Primary Text -->

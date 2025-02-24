@@ -79,7 +79,7 @@ public class RegisterFragment extends Fragment {
         user.put("name", name);
         user.put("email", email);
         user.put("phone", phone);
-        user.put("role", "client"); // Default role
+        user.put("role", "client");
 
         db.collection("users").document(userId).set(user)
                 .addOnSuccessListener(aVoid -> {

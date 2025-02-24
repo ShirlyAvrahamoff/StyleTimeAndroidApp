@@ -61,7 +61,6 @@ public class AdminHomeFragment extends Fragment {
                 new OnBackPressedCallback(true) {
                     @Override
                     public void handleOnBackPressed() {
-                        // Do nothing to block back press
                     }
                 });
 

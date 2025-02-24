@@ -130,4 +130,9 @@ public class Appointment {
         this.time = time;
         this.parsedDate = parseDate(this.date, this.time);
     }
+
+    public void setParsedDate(Date parsedDate) {
+        this.parsedDate = parsedDate;
+    }
+
 }
